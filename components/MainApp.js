@@ -1,7 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Image } from 'react-native';
 
 import Home from './Home';
 import MyPage from './MyPage';
@@ -9,8 +9,11 @@ import MyRunning from './MyRunning';
 import RunningHome from './RunningHome';
 import ProfileEdit from './ProfileEdit'; // ProfileEdit 화면 가져오기
 
+
+
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+
 
 function MyPageStack() {
   return (
@@ -38,7 +41,28 @@ function MyPageStack() {
 export default function MainApp() {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Home" component={Home} />
+      <Tab.Screen
+        name="Home"
+        component={Home}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <Image
+              source={require('../assets/home.png')}
+              style={{
+                width: 30,
+                height: 30,
+                tintColor: focused ? '#6039ea' : '#ccc',
+              }}
+            />
+          ),
+          headerTitle: () => (
+            <Image
+              source={require('../assets/applogo.png')} // logo.png 이미지 경로
+              style={{ width: 129, height: 50 }} // 이미지 크기 조절
+            />
+          )
+        }}
+      />
       <Tab.Screen name="RunningHome" component={RunningHome} />
       <Tab.Screen name="MyRunning" component={MyRunning} />
       {/* MyPageStack으로 MyPage와 ProfileEdit 포함 */}
