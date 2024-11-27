@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Button, BackHandler, Alert, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import RunningBlock from './RunningBlock';
 
-export default function Home({ navigation }) {
+
+export default function Home({ navigation, route }) {
 	const [runningList, setRunningList] = useState([]);
 
 	useEffect(() => {
@@ -26,8 +27,12 @@ export default function Home({ navigation }) {
 			backAction
 		);
 
+		if (route.params?.runningData) {
+			setRunningList([...runningList, route.params.runningData]);
+		}
+
 		return () => backHandler.remove();
-	}, [navigation]);
+	}, [navigation, route.params]);
 
 	const handleAddRunning = () => {
 		navigation.navigate('CreateRunning'); // CreateRunning 화면으로 이동
