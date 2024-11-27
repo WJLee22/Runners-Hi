@@ -3,13 +3,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StyleSheet, Image } from 'react-native';
 
-import Home from './Home';
+import Home from './home/Home';
 import MyPage from './MyPage';
 import MyRunning from './MyRunning';
 import RunningHome from './RunningHome';
 import ProfileEdit from './ProfileEdit'; // ProfileEdit 화면 가져오기
 
-
+import CreateRunning from '../components/home/CreateRunning';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -38,12 +38,40 @@ function MyPageStack() {
   );
 }
 
+function HomeStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Home"
+        component={Home}
+        options={{
+          headerTitle: () => (
+            <Image
+              source={require('../assets/applogo.png')} // logo.png 이미지 경로
+              style={{ width: 129, height: 50 }} // 이미지 크기 조절
+            />
+          ),
+          headerLeft: null, // 뒤로가기 버튼 숨기기
+        }}
+      />
+      <Stack.Screen
+        name="CreateRunning"
+        component={CreateRunning}
+        options={{
+          headerTitle: 'Create Running',
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+
 export default function MainApp() {
   return (
     <Tab.Navigator>
       <Tab.Screen
         name="Home"
-        component={Home}
+        component={HomeStack}
         options={{
           tabBarIcon: ({ focused }) => (
             <Image
@@ -55,12 +83,8 @@ export default function MainApp() {
               }}
             />
           ),
-          headerTitle: () => (
-            <Image
-              source={require('../assets/applogo.png')} // logo.png 이미지 경로
-              style={{ width: 129, height: 50 }} // 이미지 크기 조절
-            />
-          )
+          headerShown: false
+
         }}
       />
       <Tab.Screen name="RunningHome" component={RunningHome} />
