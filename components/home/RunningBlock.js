@@ -1,60 +1,75 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 
-const RunningBlock = ({ item }) => (
-    <View style={styles.container}>
-        <Text style={styles.title}>{item.title}</Text>
-        <View style={styles.infoContainer}>
-            <View style={styles.info}>
-                <Text style={styles.date}>{item.date}</Text>
-                <Text style={styles.time}>{item.time}</Text>
-            </View>
-            <View style={styles.info}>
-                <Text style={styles.location}>{item.location}</Text>
-                <Text style={styles.distance}>{item.distance}km</Text>
-            </View>
-            <View style={styles.participants}>
-                <Text>{item.participants}</Text>
+const RunningBlock = ({ item }) => {
+
+    return (
+        <View style={styles.container}>
+            <Text style={styles.title}>{item.title}</Text>
+            <Text style={styles.date}>
+                {item.date} {item.time}
+            </Text>
+            <View style={styles.infoContainer}>
+                <Image source={require('../../assets/plus.png')} style={styles.icon} />
+                <Text style={styles.place}>{item.place}</Text>
+                <Image source={require('../../assets/plus.png')} style={styles.icon} />
+                <Text style={styles.course}>{item.course}km</Text>
+                <View style={styles.personContainer}>
+                    <Image source={require('../../assets/plus.png')} style={styles.personIcon} />
+                    <Text style={styles.person}>1/{item.person}명</Text>
+                </View>
             </View>
         </View>
-    </View>
-);
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 10,
+        backgroundColor: '#708090', // 배경색 설정
+        padding: 16,
         marginBottom: 10,
+        borderRadius: 10, // 모서리 둥글게
     },
     title: {
+        fontSize: 18,
         fontWeight: 'bold',
+        marginBottom: 8,
+        color: 'white' // 제목 텍스트 색상
+    },
+    date: {
         fontSize: 16,
-        marginBottom: 5,
+        marginBottom: 8,
+        color: 'white' // 날짜 텍스트 색상
     },
     infoContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
     },
-    info: {
+    icon: {
+        width: 20,
+        height: 20,
+        marginRight: 5,
+    },
+    place: {
+        marginRight: 10,
+        color: 'white' // 장소 텍스트 색상
+    },
+    course: {
+        marginRight: 10,
+        color: 'white' // 코스 텍스트 색상
+    },
+    personContainer: {
         flexDirection: 'row',
         alignItems: 'center',
+        marginLeft: 'auto', // 오른쪽 정렬
     },
-    date: {
+    personIcon: {
+        width: 20,
+        height: 20,
         marginRight: 5,
     },
-    time: {
-        marginRight: 10,
-    },
-    location: {
-        marginRight: 5,
-    },
-    distance: {
-        marginLeft: 5,
-    },
-    participants: {
-        alignItems: 'flex-end',
+    person: {
+        color: 'white' // 인원 텍스트 색상
     },
 });
 

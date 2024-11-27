@@ -26,6 +26,15 @@ const CreateRunning = ({ navigation }) => {
     // TimePicker 컴포넌트를 보여줄지 여부
     const [showTimePicker, setShowTimePicker] = useState(false);
 
+    // 날짜 형식 변환 함수 (예: 2024.11.28 -> 2024.11.28 화요일)
+    const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
+        return `${year}.${month}.${day} ${dayOfWeek}요일`;
+    };
+
     // DateTimePicker를 통해서 날짜선택 or 닫기 시 이벤트 처리
     // selectedDate => 선택한 날짜값
     const dateChangeHandler = (event, selectedDate) => {
@@ -53,7 +62,7 @@ const CreateRunning = ({ navigation }) => {
     // 러닝방 생성 버튼 클릭 시 호출되는 함수
     const createRunningHandler = () => {
         Alert.alert(
-            "새 글을 등록하시겠습니까?",
+            "모집 글을 등록하시겠습니까?",
             "",
             [
                 {
@@ -66,7 +75,7 @@ const CreateRunning = ({ navigation }) => {
                     onPress: () => {
                         const runningData = {
                             title,
-                            date: date.toLocaleDateString(),
+                            date: formatDate(date),
                             time: time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                             place,
                             course,
