@@ -73,7 +73,10 @@ const CreateRunning = ({ navigation }) => {
                 {
                     text: "확인",
                     onPress: () => {
+                        // 고유한 ID 생성 (예: 현재 시간 + 랜덤 숫자)
+                        const id = Date.now() + Math.floor(Math.random() * 1000);
                         const runningData = {
+                            id, // runningData에 id 추가
                             title,
                             date: formatDate(date),
                             time: time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -82,7 +85,7 @@ const CreateRunning = ({ navigation }) => {
                             person,
                             content,
                         };
-                        navigation.navigate('Home', { runningData });
+                        navigation.navigate('HomeScreen', { runningData });
                     }
                 }
             ]

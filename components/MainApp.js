@@ -1,105 +1,99 @@
-import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
-import { StyleSheet, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Button, BackHandler, Alert, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import RunningBlock from './RunningBlock';
 
-import Home from './home/Home';
-import MyPage from './MyPage';
-import MyRunning from './MyRunning';
-import RunningHome from './RunningHome';
-import ProfileEdit from './ProfileEdit'; // ProfileEdit 화면 가져오기
+export default function Home({ navigation, route }) {
+  const [runningList, setRunningList] = useState([]);
 
-import CreateRunning from '../components/home/CreateRunning';
+  useEffect(() => {
+    const backAction = () => {
+      Alert.alert('Hold on!', 'Do you want to go back to the login screen?', [
+        {
+          text: 'Cancel',
+          onPress: () => null,
+          style: 'cancel',
+        },
+        {
+          text: 'YES',
+          onPress: () => navigation.navigate('Login'),
+        },
+      ]);
+      return true;
+    };
 
-const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
 
+    const loadRunningList = async () => {
+      try {
+        const storedRunningList = await AsyncStorage.getItem('runningList');
+        if (storedRunningList) {
+          setRunningList(JSON.parse(storedRunningList));
+        }
+      } catch (error) {
+        console.error('Failed to load running list from storage', error);
+      }
+    };
 
-function MyPageStack() {
+    loadRunningList();
+
+    if (route.params?.runningData) {
+      const newRunningList = [...runningList, route.params.runningData];
+      setRunningList(newRunningList);
+      AsyncStorage.setItem('runningList', JSON.stringify(newRunningList));
+    }
+
+    return () => backHandler.remove();
+  }, [navigation, route.params]);
+
+  const handleAddRunning = () => {
+    navigation.navigate('CreateRunning'); // CreateRunning 화면으로 이동
+  };
+
   return (
-    <Stack.Navigator>
-      {/* MyPage 기본 화면 */}
-      <Stack.Screen
-        name="MyPage"
-        component={MyPage}
-        options={{ headerShown: false }} // MyPage의 헤더 숨기기
+    <View style={styles.container}>
+      <Button
+        title="Go Back to Login"
+        onPress={() => navigation.navigate('Login')}
       />
-      {/* ProfileEdit 화면 */}
-      <Stack.Screen
-        name="ProfileEdit"
-        component={ProfileEdit}
-        options={{
-          headerTitle: '프로필 수정', // 헤더 제목 설정
-          headerStyle: { backgroundColor: '#6200ea' },
-          headerTintColor: '#fff', // 헤더 텍스트 색상
-        }}
-      />
-    </Stack.Navigator>
-  );
-}
-
-function HomeStack() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="Home"
-        component={Home}
-        options={{
-          headerTitle: () => (
-            <Image
-              source={require('../assets/applogo.png')} // logo.png 이미지 경로
-              style={{ width: 129, height: 50 }} // 이미지 크기 조절
-            />
-          ),
-          headerLeft: null, // 뒤로가기 버튼 숨기기
-        }}
-      />
-      <Stack.Screen
-        name="CreateRunning"
-        component={CreateRunning}
-        options={{
-          headerTitle: 'Create Running',
-        }}
-      />
-    </Stack.Navigator>
-  );
-}
-
-
-export default function MainApp() {
-  return (
-    <Tab.Navigator>
-      <Tab.Screen
-        name="Home"
-        component={HomeStack}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <Image
-              source={require('../assets/home.png')}
-              style={{
-                width: 30,
-                height: 30,
-                tintColor: focused ? '#6039ea' : '#ccc',
-              }}
-            />
-          ),
-          headerShown: false
-
-        }}
-      />
-      <Tab.Screen name="RunningHome" component={RunningHome} />
-      <Tab.Screen name="MyRunning" component={MyRunning} />
-      {/* MyPageStack으로 MyPage와 ProfileEdit 포함 */}
-      <Tab.Screen name="MyPage" component={MyPageStack} options={{ headerShown: false }} />
-    </Tab.Navigator>
+      {runningList.map((item) => (
+        <RunningBlock key={item.id} item={item} />
+      ))}
+      <TouchableOpacity style={styles.addButton} onPress={handleAddRunning}>
+        <Image source={require('../../assets/plus.png')} style={styles.addButtonIcon} />
+      </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  logo: {
+    width: 100,
+    height: 100,
+    alignSelf: 'center',
+    marginVertical: 20,
+  },
+  addButton: {
+    position: 'absolute',
+    bottom: 30,
+    right: 30,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     backgroundColor: '#fff',
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5,
+    padding: 0,
+  },
+  addButtonIcon: {
+    width: '100%',
+    height: '100%',
   },
 });
