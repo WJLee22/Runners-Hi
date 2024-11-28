@@ -2,22 +2,23 @@ import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 
 const RunningBlock = ({ item }) => {
-
     return (
         <View style={styles.container}>
             <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.date}>
-                {item.date} {item.time}
-            </Text>
             <View style={styles.infoContainer}>
-                <Image source={require('../../assets/plus.png')} style={styles.icon} />
-                <Text style={styles.place}>{item.place}</Text>
-                <Image source={require('../../assets/plus.png')} style={styles.icon} />
-                <Text style={styles.course}>{item.course}km</Text>
+                <Text style={styles.date}>
+                    {item.date} {item.time}
+                </Text>
                 <View style={styles.personContainer}>
-                    <Image source={require('../../assets/plus.png')} style={styles.personIcon} />
+                    <Image source={require('../../assets/person.png')} style={styles.personIcon} />
                     <Text style={styles.person}>1/{item.person}명</Text>
                 </View>
+            </View>
+            <View style={styles.bottomContainer}>
+                <Image source={require('../../assets/place.png')} style={styles.icon} />
+                <Text style={styles.place}>{item.place}</Text>
+                <Image source={require('../../assets/course.png')} style={styles.icon} />
+                <Text style={styles.course}>{item.course}km</Text>
             </View>
         </View>
     );
@@ -25,23 +26,33 @@ const RunningBlock = ({ item }) => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#708090', // 배경색 설정
+        backgroundColor: `rgb(255, 255, 255)`,
         padding: 16,
-        marginBottom: 10,
-        borderRadius: 10, // 모서리 둥글게
+        marginTop: 10,
+        borderRadius: 10,
+        borderBottomWidth: 3,
+        borderBottomColor: 'rgb(220, 220, 220)',
+        borderTopWidth: 3,
+        borderTopColor: 'rgb(220, 220, 220)',
     },
     title: {
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 8,
-        color: 'white' // 제목 텍스트 색상
+        color: 'rgb(50, 50, 50)', // Changed to dark grey
+    },
+    infoContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 5
     },
     date: {
         fontSize: 16,
-        marginBottom: 8,
-        color: 'white' // 날짜 텍스트 색상
+        color: `rgb(180, 150, 255)`,
+        fontWeight: 'bold',
     },
-    infoContainer: {
+    personContainer: {
         flexDirection: 'row',
         alignItems: 'center',
     },
@@ -50,18 +61,17 @@ const styles = StyleSheet.create({
         height: 20,
         marginRight: 5,
     },
+    bottomContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
     place: {
         marginRight: 10,
-        color: 'white' // 장소 텍스트 색상
+        color: 'rgb(50, 50, 50)', // Changed to dark grey
     },
     course: {
         marginRight: 10,
-        color: 'white' // 코스 텍스트 색상
-    },
-    personContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginLeft: 'auto', // 오른쪽 정렬
+        color: 'rgb(50, 50, 50)', // Changed to dark grey
     },
     personIcon: {
         width: 20,
@@ -69,7 +79,7 @@ const styles = StyleSheet.create({
         marginRight: 5,
     },
     person: {
-        color: 'white' // 인원 텍스트 색상
+        color: 'rgb(50, 50, 50)', // Changed to dark grey
     },
 });
 
