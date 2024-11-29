@@ -62,16 +62,16 @@ const RunningDetail = ({ route, navigation }) => {
             <MapView
                 style={styles.map}
                 initialRegion={{
-                    latitude: 37.5988, // 임시 위도 (실제 위치로 변경)
-                    longitude: 127.0373, // 임시 경도 (실제 위치로 변경)
+                    latitude: 37.5808, // 임시 위도 (실제 위치로 변경)
+                    longitude: 127.0074, // 임시 경도 (실제 위치로 변경)
                     latitudeDelta: 0.01,
                     longitudeDelta: 0.01,
                 }}
             >
                 <Marker
                     coordinate={{
-                        latitude: 37.5988, // 임시 위도 (실제 위치로 변경)
-                        longitude: 127.0373, // 임시 경도 (실제 위치로 변경)
+                        latitude: 37.5808, // 임시 위도 (실제 위치로 변경)
+                        longitude: 127.0074, // 임시 경도 (실제 위치로 변경)
                     }}
                     title={item.place}
                 />
