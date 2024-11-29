@@ -105,11 +105,13 @@ export default function Home({ navigation, route }) {
 		}
 	};
 
+	// 새로고침시 러닝 리스트 최신화  
 	const onRefresh = useCallback(async () => {
 		setRefreshing(true);
 		await loadRunningList();
 		setRefreshing(false);
 	}, [loadRunningList]);
+
 
 	return (
 		<View style={styles.container}>
@@ -123,7 +125,7 @@ export default function Home({ navigation, route }) {
 				}
 			>
 				{runningList.map((item) => (
-					<RunningBlock key={item.id} item={item} /> // key prop 수정
+					<RunningBlock key={item.id} item={item} onPress={() => navigation.navigate('RunningDetail', { item })} /> // key prop = 랜덤값, 러닝방 클릭시 RunningDetail로 이동
 				))}
 			</ScrollView>
 			<TouchableOpacity style={styles.addButton} onPress={handleAddRunning}>

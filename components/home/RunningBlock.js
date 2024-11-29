@@ -1,26 +1,28 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
-const RunningBlock = ({ item }) => {
+const RunningBlock = ({ item, onPress }) => {
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>{item.title}</Text>
-            <View style={styles.infoContainer}>
-                <Text style={styles.date}>
-                    {item.date} {item.time}
-                </Text>
-                <View style={styles.personContainer}>
-                    <Image source={require('../../assets/person.png')} style={styles.personIcon} />
-                    <Text style={styles.person}>1/{item.person}명</Text>
+        <TouchableOpacity onPress={onPress}>
+            <View style={styles.container}>
+                <Text style={styles.title}>{item.title}</Text>
+                <View style={styles.infoContainer}>
+                    <Text style={styles.date}>
+                        {item.date} {item.time}
+                    </Text>
+                    <View style={styles.personContainer}>
+                        <Image source={require('../../assets/person.png')} style={styles.personIcon} />
+                        <Text style={styles.person}>1/{item.person}명</Text>
+                    </View>
+                </View>
+                <View style={styles.bottomContainer}>
+                    <Image source={require('../../assets/place.png')} style={styles.icon} />
+                    <Text style={styles.place}>{item.place}</Text>
+                    <Image source={require('../../assets/course.png')} style={styles.icon} />
+                    <Text style={styles.course}>{item.course}km</Text>
                 </View>
             </View>
-            <View style={styles.bottomContainer}>
-                <Image source={require('../../assets/place.png')} style={styles.icon} />
-                <Text style={styles.place}>{item.place}</Text>
-                <Image source={require('../../assets/course.png')} style={styles.icon} />
-                <Text style={styles.course}>{item.course}km</Text>
-            </View>
-        </View>
+        </TouchableOpacity>
     );
 };
 

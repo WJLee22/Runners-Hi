@@ -2,6 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StyleSheet, Image } from 'react-native';
+import RunningDetail from '../components/home/RunningDetail';
 
 import Home from './home/Home';
 import MyPage from './MyPage';
@@ -59,6 +60,13 @@ function HomeStack() {
         component={CreateRunning}
         options={{
           headerTitle: 'Create Running',
+        }}
+      />
+      <Stack.Screen
+        name="RunningDetail"
+        component={RunningDetail}
+        options={{
+          headerTitle: 'Running Detail',
         }}
       />
     </Stack.Navigator>
