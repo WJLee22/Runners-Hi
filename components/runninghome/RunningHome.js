@@ -35,8 +35,7 @@ export default function RunningHome() {
 				},
 			}}
 		>
-			<TopTab.Screen name="모집중" component={RecruitingScreen} />
-			<TopTab.Screen name="참가중" component={ParticipantsScreen} />
+			<TopTab.Screen name="참가중" component={RecruitingScreen} />
 		</TopTab.Navigator>
 	);
 }
