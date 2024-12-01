@@ -1,11 +1,21 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Button, BackHandler, Alert, TouchableOpacity, Image, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import {
+	View,
+	Button,
+	BackHandler,
+	Alert,
+	TouchableOpacity,
+	Image,
+	StyleSheet,
+	ScrollView,
+	RefreshControl,
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RunningBlock from './RunningBlock';
 
 export default function Home({ navigation, route }) {
 	const [runningList, setRunningList] = useState([]);
-	const [refreshing, setRefreshing] = useState(false);// 새로고침
+	const [refreshing, setRefreshing] = useState(false); // 새로고침
 
 	// AsyncStorage에 저장된 러닝정보객체를 담아둔 배열를 불러와서 runningList 상태에 저장하는 함수 loadRunningList
 	// useCallback을 사용하여 함수를 선언 -> 컴포넌트가 처음 렌더링될 때만 함수를 생성 & 이 함수의 불필요한 재렌더링 방지
@@ -46,11 +56,16 @@ export default function Home({ navigation, route }) {
 
 				try {
 					const storedRunningList = await AsyncStorage.getItem('runningList');
-					const parsedList = storedRunningList ? JSON.parse(storedRunningList) : [];
+					const parsedList = storedRunningList
+						? JSON.parse(storedRunningList)
+						: [];
 					const updatedList = [...parsedList, newRunningData];
 
 					//console.log('Updated running list:', updatedList);
-					await AsyncStorage.setItem('runningList', JSON.stringify(updatedList)); // AsyncStorage는 비동기적임. await 사용해서 비동기 처리해주자
+					await AsyncStorage.setItem(
+						'runningList',
+						JSON.stringify(updatedList)
+					); // AsyncStorage는 비동기적임. await 사용해서 비동기 처리해주자
 
 					navigation.setParams({ runningData: null }); // 파라미터 초기화
 
@@ -90,7 +105,6 @@ export default function Home({ navigation, route }) {
 		return () => backHandler.remove();
 	}, [navigation]);
 
-
 	const handleAddRunning = () => {
 		navigation.navigate('CreateRunning'); // CreateRunning 화면으로 이동
 	};
@@ -105,36 +119,35 @@ export default function Home({ navigation, route }) {
 		}
 	};
 
-	// 새로고침시 러닝 리스트 최신화  
+	// 새로고침시 러닝 리스트 최신화
 	const onRefresh = useCallback(async () => {
 		setRefreshing(true);
 		await loadRunningList();
 		setRefreshing(false);
 	}, [loadRunningList]);
 
-
 	return (
 		<View style={styles.container}>
-			<Button
-				title="Go Back to Login"
-				onPress={() => navigation.navigate('Login')}
-			/>
 			<ScrollView
 				refreshControl={
 					<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
 				}
 			>
 				{runningList.map((item) => (
-					<RunningBlock key={item.id} item={item} onPress={() => navigation.navigate('RunningDetail', { item })} /> // key prop = 랜덤값, 러닝방 클릭시 RunningDetail로 이동
+					<RunningBlock
+						key={item.id}
+						item={item}
+						onPress={() => navigation.navigate('RunningDetail', { item })}
+					/> // key prop = 랜덤값, 러닝방 클릭시 RunningDetail로 이동
 				))}
 			</ScrollView>
 			<TouchableOpacity style={styles.addButton} onPress={handleAddRunning}>
-				<Image source={require('../../assets/plus.png')} style={styles.addButtonIcon} />
+				<Image
+					source={require('../../assets/plus.png')}
+					style={styles.addButtonIcon}
+				/>
 			</TouchableOpacity>
-			<Button
-				title="Clear Storage"
-				onPress={handleClearStorage}
-			/>
+			<Button title="Clear Storage" onPress={handleClearStorage} />
 		</View>
 	);
 }
