@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	View,
 	Text,
@@ -9,6 +9,8 @@ import {
 	Switch,
 	Modal,
 	Alert,
+	TouchableWithoutFeedback,
+	Keyboard,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -25,9 +27,9 @@ const CreateRunning = ({ navigation }) => {
 	//러닝 시간
 	const [time, setTime] = useState(new Date());
 	//러닝 시작 장소
-	const [place, setPlace] = useState('한성대학교');
+	const [place, setPlace] = useState('');
 	//러닝 코스
-	const [course, setCourse] = useState('2.4');
+	const [course, setCourse] = useState('');
 	//러닝 인원
 	const [person, setPersons] = useState('');
 	//러닝 내용
@@ -43,6 +45,7 @@ const CreateRunning = ({ navigation }) => {
 
 	const [showPlaceChoice, setShowPlaceChoice] = useState(false);
 	const [showCourseChoice, setShowCourseChoice] = useState(false);
+	const [markers, setMarkers] = useState();
 
 	// 날짜 형식 변환 함수 (예: 2024.11.28 -> 2024.11.28 화요일)
 	const formatDate = (date) => {
@@ -72,7 +75,9 @@ const CreateRunning = ({ navigation }) => {
 	};
 
 	const handleCourseChoice = () => {
-		setShowCourseChoice(true); // 코스 선택 화면을 보여준다
+		if (markers) {
+			setShowCourseChoice(true); // 코스 선택 화면을 보여준다
+		}
 	};
 
 	const placeChoiceHandler = () => {
@@ -116,6 +121,11 @@ const CreateRunning = ({ navigation }) => {
 			},
 		]);
 	};
+
+	useEffect(() => {
+		console.log(markers);
+		console.log(course);
+	}, [markers]);
 
 	return (
 		// 러닝방을 구성하는 화면의 UI
@@ -183,7 +193,7 @@ const CreateRunning = ({ navigation }) => {
 			<TouchableOpacity onPress={handleCourseChoice}>
 				<TextInput
 					style={styles.input}
-					value={course}
+					value={`${String(course)}km`}
 					editable={false}
 					placeholder="코스 경로를 선택하세요"
 				/>
@@ -195,19 +205,25 @@ const CreateRunning = ({ navigation }) => {
 					<PlaceChoice
 						setPlace={setPlace} // 장소 선택 후 place 상태 변경
 						onClose={() => setShowPlaceChoice(false)} // 화면 닫기
+						setMarkers={setMarkers}
 					/>
 				</View>
 			)}
 
-			{showCourseChoice && (
-				<View style={styles.modal}>
-					<CourseChoice
-						navigation={navigation}
-						setCourse={setCourse} // 코스 선택 후 course 상태 변경
-						onClose={() => setShowCourseChoice(false)} // 화면 닫기
-					/>
-				</View>
-			)}
+			{showCourseChoice &&
+				(markers ? (
+					<View style={styles.modal}>
+						<CourseChoice
+							markers={markers}
+							navigation={navigation}
+							setCourse={setCourse} // 코스 선택 후 course 상태 변경
+							onClose={() => setShowCourseChoice(false)} // 화면 닫기
+							setMarkers={setMarkers}
+						/>
+					</View>
+				) : (
+					alert('중심 좌표를 설정해야합니다.')
+				))}
 
 			<Text>러닝인원</Text>
 			<TextInput
@@ -243,13 +259,19 @@ const CreateRunning = ({ navigation }) => {
 			</Modal>
 
 			<Text>내용을 입력하세요</Text>
+
 			<TextInput
 				style={styles.input}
 				value={content}
 				onChangeText={setContent}
 				multiline
+				placeholder="여기에 입력하세요"
+				onSubmitEditing={Keyboard.dismiss}
+				returnKeyType="done"
 			/>
-
+			<TouchableOpacity style={styles.button} onPress={Keyboard.dismiss}>
+				<Text style={styles.buttonText}>확인</Text>
+			</TouchableOpacity>
 			<Button title="완료" onPress={createRunningHandler} />
 		</View>
 	);
