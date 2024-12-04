@@ -19,7 +19,9 @@ export default function ProfileEdit({ navigation, route }) {
 
   // 상태 관리
   const [nickname, setNickname] = useState(profile.nickname || '');
-  const [statusMessage, setStatusMessage] = useState(profile.statusMessage || '');
+  const [statusMessage, setStatusMessage] = useState(
+    profile.statusMessage || ''
+  );
   const [selectedPace, setSelectedPace] = useState(profile.pace || '');
   const [selectedPlaces, setSelectedPlaces] = useState(profile.places || []);
   const [selectedStyle, setSelectedStyle] = useState(profile.style || '');
@@ -30,9 +32,21 @@ export default function ProfileEdit({ navigation, route }) {
   const [isStyleModalVisible, setStyleModalVisible] = useState(false);
 
   // 옵션 데이터
-  const paceOptions = ['5.0 이하 분/km', '5.5 분/km', '6.0 분/km', '6.0 이상 분/km', '잘 모름 분/km'];
+  const paceOptions = [
+    '5.0 이하 분/km',
+    '5.5 분/km',
+    '6.0 분/km',
+    '6.0 이상 분/km',
+    '잘 모름 분/km',
+  ];
   const placeOptions = ['공원', '강변', '호수', '운동장', '트랙'];
-  const styleOptions = ['대화 없이 달리기', '대화하며 달리기', '점점 빠르게 달리기', '중간중간 쉬며 달리기', '일정하게 달리기'];
+  const styleOptions = [
+    '대화 없이 달리기',
+    '대화하며 달리기',
+    '점점 빠르게 달리기',
+    '중간중간 쉬며 달리기',
+    '일정하게 달리기',
+  ];
 
   // 장소 선택 핸들러
   const togglePlace = (place) => {
@@ -73,10 +87,10 @@ export default function ProfileEdit({ navigation, route }) {
       {/* 프로필 섹션 */}
       <View style={styles.profileSection}>
         <View style={styles.profileImagePlaceholder}>
-        <Image
-          source={require('../../assets/profile.png')}
-          style={styles.profileImage}
-        />
+          <Image
+            source={require('../../assets/profile.png')}
+            style={styles.profileImage}
+          />
         </View>
         <Text style={styles.genderText}>남성</Text>
         <Text style={styles.birthYearText}>2001년생</Text>
@@ -113,7 +127,9 @@ export default function ProfileEdit({ navigation, route }) {
           style={styles.optionBox}
           onPress={() => setPaceModalVisible(true)}
         >
-          <Text style={styles.optionText}>페이스: {selectedPace || '선택 없음'}</Text>
+          <Text style={styles.optionText}>
+            페이스: {selectedPace || '선택 없음'}
+          </Text>
         </TouchableOpacity>
         <Modal isVisible={isPaceModalVisible}>
           <View style={styles.modalContent}>
@@ -138,7 +154,10 @@ export default function ProfileEdit({ navigation, route }) {
           onPress={() => setPlaceModalVisible(true)}
         >
           <Text style={styles.optionText}>
-            장소: {selectedPlaces.length > 0 ? selectedPlaces.join(', ') : '선택 없음'}
+            장소:{' '}
+            {selectedPlaces.length > 0
+              ? selectedPlaces.join(', ')
+              : '선택 없음'}
           </Text>
         </TouchableOpacity>
         <Modal isVisible={isPlaceModalVisible}>
@@ -173,7 +192,9 @@ export default function ProfileEdit({ navigation, route }) {
           style={styles.optionBox}
           onPress={() => setStyleModalVisible(true)}
         >
-          <Text style={styles.optionText}>스타일: {selectedStyle || '선택 없음'}</Text>
+          <Text style={styles.optionText}>
+            스타일: {selectedStyle || '선택 없음'}
+          </Text>
         </TouchableOpacity>
         <Modal isVisible={isStyleModalVisible}>
           <View style={styles.modalContent}>

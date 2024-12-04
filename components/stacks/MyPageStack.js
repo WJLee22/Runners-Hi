@@ -10,7 +10,7 @@ export default function MyPageStack() {
 			<Stack.Screen
 				name="MyPage"
 				component={MyPage}
-				options={{ headerShown: false }} // MyPage의 헤더 숨기기
+				options={{ headerShown: null }} // MyPage의 헤더 숨기기
 			/>
 			{/* ProfileEdit 화면 */}
 			<Stack.Screen
