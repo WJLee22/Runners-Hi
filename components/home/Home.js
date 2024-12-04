@@ -50,6 +50,11 @@ export default function Home({ navigation, route }) {
 		return () => unsubscribe();
 	}, [navigation]);
 
+	const sortRunningListByDate = () => {
+		const sortedList = [...runningList].sort((a, b) => new Date(a.date.replace(/(\d+)\.(\d+)\.(\d+).*/, '$1-$2-$3')) - new Date(b.date.replace(/(\d+)\.(\d+)\.(\d+).*/, '$1-$2-$3'))); //Date 객체로 변환해서 -> 연산으로 날짜 차이 계산.
+		setRunningList(sortedList);
+	};
+
 	useEffect(() => {
 		const updateRunningList = async () => {
 			if (route.params?.runningData) {
@@ -120,6 +125,7 @@ export default function Home({ navigation, route }) {
 
 	return (
 		<View style={styles.container}>
+			<Button title="날짜순 정렬" onPress={sortRunningListByDate} />
 			<ScrollView
 				refreshControl={
 					<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
