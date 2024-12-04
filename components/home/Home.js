@@ -127,6 +127,7 @@ export default function Home({ navigation, route }) {
 			>
 				{runningList.map((item) => (
 					<RunningBlock
+						style={styles.runningblock}
 						key={item.id}
 						item={item}
 						onPress={() => navigation.navigate('RunningDetail', { item })}
@@ -139,39 +140,57 @@ export default function Home({ navigation, route }) {
 		</View>
 	);
 }
-
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#EDE7F6', // 연한 보라색 배경
+		backgroundColor: '#EDE7F6',
+		paddingHorizontal: 10,
 	},
+
 	addButton: {
 		position: 'absolute',
-		bottom: 30,
-		right: 30,
+		bottom: 20,
+		right: 20,
+		backgroundColor: '#7C4DFF',
 		width: 60,
 		height: 60,
 		borderRadius: 30,
-		backgroundColor: '#fff',
 		justifyContent: 'center',
 		alignItems: 'center',
-		elevation: 5,
-		padding: 0,
-	},
-	addButton: {
-		position: 'absolute',
-		bottom: 20, // 화면 하단에서 간격
-		right: 20, // 화면 우측에서 간격
-		backgroundColor: '#7C4DFF', // 보라색 버튼 배경
-		width: 60, // 버튼 크기
-		height: 60,
-		borderRadius: 30, // 원형 버튼
-		justifyContent: 'center',
-		alignItems: 'center',
-		shadowColor: '#000', // 그림자 효과
+		shadowColor: '#000',
 		shadowOffset: { width: 0, height: 4 },
 		shadowOpacity: 0.3,
 		shadowRadius: 4,
-		elevation: 8, // 안드로이드 그림자
+		elevation: 8,
+	},
+
+	runningblock: {
+		width: '100%',
+		maxWidth: 350,
+		alignSelf: 'center',
+		backgroundColor: '#fff',
+		padding: 15,
+		marginBottom: 15,
+		borderRadius: 10,
+		borderLeftWidth: 4,
+		borderRightWidth: 4,
+		borderLeftColor: '#7C4DFF',
+		borderRightColor: '#7C4DFF',
+
+		// 그림자 효과 추가
+		shadowColor: '#000', // 그림자 색상
+		shadowOffset: { width: 0, height: 2 }, // 그림자의 위치
+		shadowOpacity: 0.2, // 그림자의 불투명도
+		shadowRadius: 6, // 그림자의 퍼짐 정도
+		elevation: 8, // 안드로이드에서의 그림자 효과
+
+		// 그림자 효과가 강화된 상태
+		marginVertical: 10, // 세로 여백 추가
+	},
+
+	runningblockTitle: {
+		fontSize: 18,
+		fontWeight: 'bold',
+		color: '#333',
 	},
 });
