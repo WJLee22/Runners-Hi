@@ -9,17 +9,19 @@ import {
   ScrollView,
 } from 'react-native';
 import Modal from 'react-native-modal';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getAuth } from 'firebase/auth';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../firebase/firebase'; // 경로를 프로젝트에 맞게 수정하세요.
 
 export default function ProfileEdit({ navigation, route }) {
-  const STORAGE_KEY = 'RUNNING_STYLE';
-
   // MyPage에서 전달받은 데이터
   const { profile, setProfile } = route.params;
 
   // 상태 관리
   const [nickname, setNickname] = useState(profile.nickname || '');
-  const [statusMessage, setStatusMessage] = useState(profile.statusMessage || '');
+  const [statusMessage, setStatusMessage] = useState(
+    profile.statusMessage || ''
+  );
   const [selectedPace, setSelectedPace] = useState(profile.pace || '');
   const [selectedPlaces, setSelectedPlaces] = useState(profile.places || []);
   const [selectedStyle, setSelectedStyle] = useState(profile.style || '');
@@ -30,9 +32,21 @@ export default function ProfileEdit({ navigation, route }) {
   const [isStyleModalVisible, setStyleModalVisible] = useState(false);
 
   // 옵션 데이터
-  const paceOptions = ['5.0 이하 분/km', '5.5 분/km', '6.0 분/km', '6.0 이상 분/km', '잘 모름 분/km'];
+  const paceOptions = [
+    '5.0 이하 분/km',
+    '5.5 분/km',
+    '6.0 분/km',
+    '6.0 이상 분/km',
+    '잘 모름 분/km',
+  ];
   const placeOptions = ['공원', '강변', '호수', '운동장', '트랙'];
-  const styleOptions = ['대화 없이 달리기', '대화하며 달리기', '점점 빠르게 달리기', '중간중간 쉬며 달리기', '일정하게 달리기'];
+  const styleOptions = [
+    '대화 없이 달리기',
+    '대화하며 달리기',
+    '점점 빠르게 달리기',
+    '중간중간 쉬며 달리기',
+    '일정하게 달리기',
+  ];
 
   // 장소 선택 핸들러
   const togglePlace = (place) => {
@@ -46,7 +60,7 @@ export default function ProfileEdit({ navigation, route }) {
   // 저장 버튼 동작
   const handleSave = async () => {
     const updatedProfile = {
-      nickname,
+      name: nickname, // 닉네임을 'name' 필드로 저장
       statusMessage,
       pace: selectedPace,
       places: selectedPlaces,
@@ -54,12 +68,23 @@ export default function ProfileEdit({ navigation, route }) {
     };
 
     try {
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedProfile)); // AsyncStorage에 저장
+      const auth = getAuth();
+      const userId = auth.currentUser?.uid;
+
+      if (!userId) {
+        alert('로그인이 필요합니다.');
+        return;
+      }
+
+      const userDocRef = doc(db, 'users', userId);
+      await updateDoc(userDocRef, updatedProfile); // Firestore에 업데이트
+
       setProfile(updatedProfile); // MyPage 상태 업데이트
-      alert('프로필 데이터가 저장되었습니다!');
+      alert('프로필이 성공적으로 업데이트되었습니다!');
       navigation.goBack(); // 이전 화면으로 이동
     } catch (error) {
-      console.error('Failed to save profile data:', error);
+      console.error('Failed to update profile data:', error);
+      alert('프로필 업데이트에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
@@ -73,10 +98,10 @@ export default function ProfileEdit({ navigation, route }) {
       {/* 프로필 섹션 */}
       <View style={styles.profileSection}>
         <View style={styles.profileImagePlaceholder}>
-        <Image
-          source={require('../../assets/profile.png')}
-          style={styles.profileImage}
-        />
+          <Image
+            source={require('../../assets/profile.png')}
+            style={styles.profileImage}
+          />
         </View>
         <Text style={styles.genderText}>남성</Text>
         <Text style={styles.birthYearText}>2001년생</Text>
@@ -113,7 +138,9 @@ export default function ProfileEdit({ navigation, route }) {
           style={styles.optionBox}
           onPress={() => setPaceModalVisible(true)}
         >
-          <Text style={styles.optionText}>페이스: {selectedPace || '선택 없음'}</Text>
+          <Text style={styles.optionText}>
+            페이스: {selectedPace || '선택 없음'}
+          </Text>
         </TouchableOpacity>
         <Modal isVisible={isPaceModalVisible}>
           <View style={styles.modalContent}>
@@ -138,7 +165,10 @@ export default function ProfileEdit({ navigation, route }) {
           onPress={() => setPlaceModalVisible(true)}
         >
           <Text style={styles.optionText}>
-            장소: {selectedPlaces.length > 0 ? selectedPlaces.join(', ') : '선택 없음'}
+            장소:{' '}
+            {selectedPlaces.length > 0
+              ? selectedPlaces.join(', ')
+              : '선택 없음'}
           </Text>
         </TouchableOpacity>
         <Modal isVisible={isPlaceModalVisible}>
@@ -173,7 +203,9 @@ export default function ProfileEdit({ navigation, route }) {
           style={styles.optionBox}
           onPress={() => setStyleModalVisible(true)}
         >
-          <Text style={styles.optionText}>스타일: {selectedStyle || '선택 없음'}</Text>
+          <Text style={styles.optionText}>
+            스타일: {selectedStyle || '선택 없음'}
+          </Text>
         </TouchableOpacity>
         <Modal isVisible={isStyleModalVisible}>
           <View style={styles.modalContent}>
@@ -200,7 +232,6 @@ export default function ProfileEdit({ navigation, route }) {
     </ScrollView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,

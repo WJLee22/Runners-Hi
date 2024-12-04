@@ -139,15 +139,23 @@ const RunningDetail = ({ route, navigation }) => {
       await updateDoc(docRef, {
         participants: arrayUnion(currentUserId),
       });
+
+      // 사용자의 joinedRunning 배열에 러닝 ID 추가
+      const userDocRef = doc(db, 'users', currentUserId);
+      await updateDoc(userDocRef, {
+        joinedRunning: arrayUnion(item.id),
+      });
+
       setHasJoined(true);
       Alert.alert('참가 성공', '러닝에 참가하셨습니다.');
+
       // 업데이트된 참가자 목록 다시 가져오기
       setParticipants((prevParticipants) => [
         ...prevParticipants,
         currentUserId,
       ]);
+
       // 참가자 상세 정보 업데이트
-      const userDocRef = doc(db, 'users', currentUserId);
       const userDocSnap = await getDoc(userDocRef);
       if (userDocSnap.exists()) {
         setParticipantDetails((prevDetails) => [
@@ -168,6 +176,13 @@ const RunningDetail = ({ route, navigation }) => {
       await updateDoc(docRef, {
         participants: arrayRemove(currentUserId),
       });
+
+      // 사용자의 joinedRunning 배열에서 러닝 ID 제거
+      const userDocRef = doc(db, 'users', currentUserId);
+      await updateDoc(userDocRef, {
+        joinedRunning: arrayRemove(item.id),
+      });
+
       setHasJoined(false);
       setParticipants((prevParticipants) =>
         prevParticipants.filter((uid) => uid !== currentUserId)
