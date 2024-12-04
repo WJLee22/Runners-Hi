@@ -11,13 +11,14 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import app from '../firebase/firebase';
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
-    const auth = getAuth();
+    const auth = getAuth(app);
     try {
       await signInWithEmailAndPassword(auth, email, password);
       Alert.alert('로그인 성공', '메인 화면으로 이동합니다.');
