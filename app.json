@@ -20,12 +20,12 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.hobak.happinessql",
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyB-z878ThYwqK5bIyaZSClYd71C9cYNy-A"
         }
-      }
+      },
+      "package": "com.anonymous.runnershigh"
     },
     "web": {
       "favicon": "./assets/favicon.png"

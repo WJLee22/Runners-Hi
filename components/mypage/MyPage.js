@@ -10,11 +10,14 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Modal from 'react-native-modal';
+import { getAuth } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase/firebase'; // Firestore 연결
 
 export default function MyPage({ navigation }) {
   const [profile, setProfile] = useState({
     nickname: '미율치',
-    statusMessage: '하하',
+    statusMessage: '안녕하세요, RunnersHi입니다!',
   });
 
   const [selectedDate, setSelectedDate] = useState(null);
@@ -23,6 +26,42 @@ export default function MyPage({ navigation }) {
   const [isModalVisible, setModalVisible] = useState(false);
 
   const STORAGE_KEY = 'MEMO_DATA';
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const auth = getAuth();
+        const userId = auth.currentUser?.uid;
+
+        if (!userId) {
+          console.error('로그인된 유저가 없습니다.');
+          return;
+        }
+
+        const userDocRef = doc(db, 'users', userId);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (userDocSnap.exists()) {
+          const userData = userDocSnap.data();
+          setProfile((prevProfile) => ({
+            ...prevProfile,
+            nickname: userData.name || prevProfile.nickname, // name 필드 사용
+            statusMessage: userData.statusMessage || prevProfile.statusMessage,
+          }));
+        } else {
+          console.error('사용자 문서가 없습니다.');
+        }
+      } catch (error) {
+        console.error('유저 프로필 가져오기 실패:', error);
+      }
+    };
+
+    fetchUserProfile();
+  }, []); // 빈 배열로 실행 시점 명시
+
+  useEffect(() => {
+    console.log('프로필 업데이트:', profile);
+  }, [profile]);
 
   // AsyncStorage에서 메모 데이터 로드
   useEffect(() => {
@@ -177,10 +216,7 @@ export default function MyPage({ navigation }) {
             multiline
           />
           <View style={styles.modalButtons}>
-            <TouchableOpacity
-              style={styles.saveButton}
-              onPress={saveMemo}
-            >
+            <TouchableOpacity style={styles.saveButton} onPress={saveMemo}>
               <Text style={styles.saveButtonText}>저장</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -199,7 +235,7 @@ export default function MyPage({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#EDE7F6', // 연한 보라색 배경
     padding: 16,
     paddingTop: 100,
   },
