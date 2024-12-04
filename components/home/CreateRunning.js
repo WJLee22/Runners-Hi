@@ -11,6 +11,7 @@ import {
 	Alert,
 	TouchableWithoutFeedback,
 	Keyboard,
+	ScrollView,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -125,8 +126,8 @@ const CreateRunning = ({ navigation }) => {
 
 	return (
 		// 러닝방을 구성하는 화면의 UI
-		<View style={styles.container}>
-			<Text>제목</Text>
+		<ScrollView style={styles.container}>
+			<Text style={styles.label}>제목</Text>
 			<TextInput
 				style={styles.input}
 				value={title}
@@ -134,9 +135,8 @@ const CreateRunning = ({ navigation }) => {
 				placeholder="러닝방 제목을 입력하세요"
 			/>
 
-			<Text>날짜</Text>
+			<Text style={styles.label}>날짜</Text>
 
-			{/* TextInput를 감싸는 TouchableOpacity => TextInput 클릭을 통해 ShowDatePicker = true -> 재렌더링 -> DatePicker 컴포넌트 화면에 출력됨 */}
 			<TouchableOpacity onPress={() => setShowDatePicker(true)}>
 				<TextInput
 					style={styles.input}
@@ -144,7 +144,7 @@ const CreateRunning = ({ navigation }) => {
 					editable={false}
 				/>
 			</TouchableOpacity>
-			{/*showDatePicker === true, 날짜선택피커 화면에 렌더링 */}
+
 			{showDatePicker && (
 				<DateTimePicker
 					value={date}
@@ -154,7 +154,7 @@ const CreateRunning = ({ navigation }) => {
 				/>
 			)}
 
-			<Text>시간</Text>
+			<Text style={styles.label}>시간</Text>
 			<TouchableOpacity onPress={() => setShowTimePicker(true)}>
 				<TextInput
 					style={styles.input}
@@ -174,7 +174,7 @@ const CreateRunning = ({ navigation }) => {
 				/>
 			)}
 
-			<Text>장소</Text>
+			<Text style={styles.label}>장소</Text>
 			<TouchableOpacity onPress={handlePlaceChoice}>
 				<TextInput
 					style={styles.input}
@@ -184,7 +184,7 @@ const CreateRunning = ({ navigation }) => {
 				/>
 			</TouchableOpacity>
 
-			<Text>러닝코스</Text>
+			<Text style={styles.label}>러닝코스</Text>
 			<TouchableOpacity onPress={handleCourseChoice}>
 				<TextInput
 					style={styles.input}
@@ -194,12 +194,11 @@ const CreateRunning = ({ navigation }) => {
 				/>
 			</TouchableOpacity>
 
-			{/* 조건부로 PlaceChoice 또는 CourseChoice 화면 렌더링 */}
 			{showPlaceChoice && (
 				<View style={styles.modal}>
 					<PlaceChoice
-						setPlace={setPlace} // 장소 선택 후 place 상태 변경
-						onClose={() => setShowPlaceChoice(false)} // 화면 닫기
+						setPlace={setPlace}
+						onClose={() => setShowPlaceChoice(false)}
 						setMarkers={setMarkers}
 					/>
 				</View>
@@ -211,8 +210,8 @@ const CreateRunning = ({ navigation }) => {
 						<CourseChoice
 							markers={markers}
 							navigation={navigation}
-							setCourse={setCourse} // 코스 선택 후 course 상태 변경
-							onClose={() => setShowCourseChoice(false)} // 화면 닫기
+							setCourse={setCourse}
+							onClose={() => setShowCourseChoice(false)}
 							setMarkers={setMarkers}
 						/>
 					</View>
@@ -220,7 +219,7 @@ const CreateRunning = ({ navigation }) => {
 					alert('중심 좌표를 설정해야합니다.')
 				))}
 
-			<Text>러닝인원</Text>
+			<Text style={styles.label}>러닝인원</Text>
 			<TextInput
 				style={styles.input}
 				value={person}
@@ -229,8 +228,7 @@ const CreateRunning = ({ navigation }) => {
 				placeholder="러닝 최대인원을 입력하세요"
 			/>
 
-			<Text>러닝 참여 관리</Text>
-			{/*Switch 컴포넌트(토글)를 통해 러닝 참여 승인여부를 결정할 수 있음*/}
+			<Text style={styles.label}>러닝 참여 관리</Text>
 			<Switch
 				value={isParticipationAccept}
 				onValueChange={() => {
@@ -253,10 +251,9 @@ const CreateRunning = ({ navigation }) => {
 				</View>
 			</Modal>
 
-			<Text>내용을 입력하세요</Text>
-
+			<Text style={styles.label}>내용을 입력하세요</Text>
 			<TextInput
-				style={styles.input}
+				style={[styles.input, styles.textArea]}
 				value={content}
 				onChangeText={setContent}
 				multiline
@@ -264,18 +261,64 @@ const CreateRunning = ({ navigation }) => {
 				onSubmitEditing={Keyboard.dismiss}
 				returnKeyType="done"
 			/>
-			<TouchableOpacity style={styles.button} onPress={Keyboard.dismiss}>
-				<Text style={styles.buttonText}>확인</Text>
+
+			<TouchableOpacity
+				style={styles.submitButton}
+				onPress={createRunningHandler}
+			>
+				<Text style={styles.submitButtonText}>완료</Text>
 			</TouchableOpacity>
-			<Button title="완료" onPress={createRunningHandler} />
-		</View>
+		</ScrollView>
 	);
 };
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		backgroundColor: '#E6D9FF', // 연보라색 배경
 		padding: 16,
+		paddingBottom: 80,
+	},
+	label: {
+		fontSize: 16,
+		fontWeight: 'bold',
+		marginBottom: 8,
+		color: '#5C3D8D', // 보라색 텍스트
+	},
+	input: {
+		height: 40,
+		borderColor: '#D1B3FF', // 라이트 보라색
+		borderWidth: 1,
+		marginBottom: 12,
+		paddingHorizontal: 8,
+		backgroundColor: 'white',
+		borderRadius: 8,
+	},
+	textArea: {
+		height: 120,
+	},
+	button: {
+		backgroundColor: '#9B4DFF', // 보라색
+		paddingVertical: 10,
+		borderRadius: 8,
+		marginBottom: 10,
+		alignItems: 'center',
+	},
+	buttonText: {
+		color: 'white',
+		fontWeight: 'bold',
+	},
+	submitButton: {
+		backgroundColor: '#7A42F4', // 다크 보라색
+		paddingVertical: 12,
+		borderRadius: 8,
+		alignItems: 'center',
+		marginBottom: 30,
+	},
+	submitButtonText: {
+		color: 'white',
+		fontWeight: 'bold',
+		fontSize: 16,
 	},
 	modal: {
 		position: 'absolute',
@@ -289,13 +332,6 @@ const styles = StyleSheet.create({
 		shadowRadius: 4,
 		elevation: 5,
 		zIndex: 10, // 기존 화면 위로 렌더링
-	},
-	input: {
-		height: 40,
-		borderColor: 'gray',
-		borderWidth: 1,
-		marginBottom: 12,
-		paddingHorizontal: 8,
 	},
 	modalContainer: {
 		flex: 1,

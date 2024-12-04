@@ -23,7 +23,8 @@ export default function HomeStack() {
 				name="CreateRunning"
 				component={CreateRunning}
 				options={{
-					headerTitle: 'Create Running',
+					headerTitle: '새로운 모임 생성',
+					headerShown: null,
 				}}
 			/>
 			<Stack.Screen

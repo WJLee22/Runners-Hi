@@ -6,6 +6,7 @@ import {
 	FlatList,
 	StyleSheet,
 	TouchableOpacity,
+	ScrollView,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -48,7 +49,7 @@ export default function RecruitingScreen() {
 
 		if (runningList.length > 0) {
 			return (
-				<View style={{ flex: 1, width: '95%' }}>
+				<ScrollView style={{ flex: 1, width: '95%' }}>
 					<FlatList
 						data={runningList}
 						keyExtractor={(item) => item.id.toString()} // id를 문자열로 변환하여 고유 키로 사용
@@ -82,7 +83,7 @@ export default function RecruitingScreen() {
 							</View>
 						)}
 					/>
-				</View>
+				</ScrollView>
 			);
 		} else {
 			return (
