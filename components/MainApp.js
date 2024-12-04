@@ -16,6 +16,7 @@ const Tab = createBottomTabNavigator();
 export default function MainApp() {
 	return (
 		<Tab.Navigator
+			initialRouteName="Home"
 			screenOptions={{
 				tabBarStyle: {
 					height: 60, // 탭 바 높이 조정 (필요 시)
