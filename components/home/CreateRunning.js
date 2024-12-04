@@ -13,7 +13,14 @@ import {
   Keyboard,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { addDoc, collection } from 'firebase/firestore'; // Firestore 추가
+import {
+  addDoc,
+  collection,
+  doc,
+  updateDoc,
+  arrayUnion,
+} from 'firebase/firestore'; // Firestore 추가
+import { getAuth } from 'firebase/auth'; // Firebase Auth 추가
 import { db } from '../firebase/firebase'; // Firestore 연결
 
 import PlaceChoice from './course/PlaceChoice';
@@ -73,6 +80,14 @@ export default function CreateRunning({ navigation }) {
     }
 
     try {
+      const auth = getAuth();
+      const userId = auth.currentUser?.uid;
+
+      if (!userId) {
+        Alert.alert('오류', '로그인이 필요합니다.');
+        return;
+      }
+
       const runningData = {
         title,
         date: formatDate(date),
@@ -86,9 +101,21 @@ export default function CreateRunning({ navigation }) {
         content,
         participationAccept: isParticipationAccept,
         markers, // 추가된 마커 데이터 저장
+        creatorId: userId, // 생성한 사용자 ID
       };
 
-      await addDoc(collection(db, 'runnings'), runningData);
+      // 러닝방 추가
+      const runningDocRef = await addDoc(
+        collection(db, 'runnings'),
+        runningData
+      );
+
+      // 해당 사용자의 데이터에 생성된 러닝방 ID 추가
+      const userDocRef = doc(db, 'users', userId);
+      await updateDoc(userDocRef, {
+        createdRunnings: arrayUnion(runningDocRef.id), // 생성된 방 ID를 배열로 추가
+      });
+
       Alert.alert('러닝방이 성공적으로 생성되었습니다!');
       navigation.navigate('HomeScreen');
     } catch (error) {
