@@ -50,6 +50,39 @@ export default function Home({ navigation, route }) {
 		return () => unsubscribe();
 	}, [navigation]);
 
+	{ /* 러닝방 리스트를 날짜순으로 정렬하는 함수 */ }
+	// const sortRunningListByDate = () => {
+	// 	const sortedList = [...runningList].sort((a, b) => new Date(a.date.replace(/(\d+)\.(\d+)\.(\d+).*/, '$1-$2-$3')) - new Date(b.date.replace(/(\d+)\.(\d+)\.(\d+).*/, '$1-$2-$3'))); //Date 객체로 변환해서 -> 연산으로 날짜 차이 계산.
+	// 	setRunningList(sortedList);
+	// };
+
+	{ /* 러닝방 리스트를 날짜+시간순으로 정렬하는 함수 */ }
+	const sortRunningListByDateTime = () => {
+		const sortedList = [...runningList].sort((a, b) => {
+			const [aDate] = a.date.split(' ');
+			const [aYear, aMonth, aDay] = aDate.split('.');
+			const [aAmPm, aTime] = a.time.split(' ');
+			const [aHour, aMin] = aTime.split(':');
+
+			const [bDate] = b.date.split(' ');
+			const [bYear, bMonth, bDay] = bDate.split('.');
+			const [bAmPm, bTime] = b.time.split(' ');
+			const [bHour, bMin] = bTime.split(':');
+
+			// 오전/오후에 따라 시간 값 판단
+			const aHourJudge = aAmPm === '오후' && aHour !== '12' ? parseInt(aHour) + 12 : parseInt(aHour);
+			const bHourJudge = bAmPm === '오후' && bHour !== '12' ? parseInt(bHour) + 12 : parseInt(bHour);
+
+			const aTimeInMillis = new Date(aYear, aMonth - 1, aDay, aHourJudge, aMin).getTime();
+			const bTimeInMillis = new Date(bYear, bMonth - 1, bDay, bHourJudge, bMin).getTime();
+
+			return aTimeInMillis - bTimeInMillis;
+		});
+		setRunningList(sortedList);
+	};
+
+
+
 	useEffect(() => {
 		const updateRunningList = async () => {
 			if (route.params?.runningData) {
@@ -120,6 +153,22 @@ export default function Home({ navigation, route }) {
 
 	return (
 		<View style={styles.container}>
+			{/*<Button title="날짜순 정렬" onPress={sortRunningListByDate} />*/}
+			<ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
+				<TouchableOpacity style={styles.topButton} onPress={sortRunningListByDateTime}>
+					<Text style={styles.topButtonText}>곧 시작하는 러닝순</Text>
+				</TouchableOpacity>
+				<TouchableOpacity style={styles.topButton} onPress={sortRunningListByDateTime}>
+					<Text style={styles.topButtonText}>곧 시작하는 러닝순</Text>
+				</TouchableOpacity>
+				<TouchableOpacity style={styles.topButton} onPress={sortRunningListByDateTime}>
+					<Text style={styles.topButtonText}>곧 시작하는 러닝순</Text>
+				</TouchableOpacity>
+				<TouchableOpacity style={styles.topButton} onPress={sortRunningListByDateTime}>
+					<Text style={styles.topButtonText}>곧 시작하는 러닝순</Text>
+				</TouchableOpacity>
+				{/* 다른 버튼들 추가 */}
+			</ScrollView>
 			<ScrollView
 				refreshControl={
 					<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -127,6 +176,7 @@ export default function Home({ navigation, route }) {
 			>
 				{runningList.map((item) => (
 					<RunningBlock
+						style={styles.runningblock}
 						key={item.id}
 						item={item}
 						onPress={() => navigation.navigate('RunningDetail', { item })}
@@ -139,39 +189,75 @@ export default function Home({ navigation, route }) {
 		</View>
 	);
 }
-
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#EDE7F6', // 연한 보라색 배경
+		backgroundColor: '#EDE7F6',
+		paddingHorizontal: 10,
 	},
+
 	addButton: {
 		position: 'absolute',
-		bottom: 30,
-		right: 30,
+		bottom: 20,
+		right: 20,
+		backgroundColor: '#7C4DFF',
 		width: 60,
 		height: 60,
 		borderRadius: 30,
-		backgroundColor: '#fff',
 		justifyContent: 'center',
 		alignItems: 'center',
-		elevation: 5,
-		padding: 0,
-	},
-	addButton: {
-		position: 'absolute',
-		bottom: 20, // 화면 하단에서 간격
-		right: 20, // 화면 우측에서 간격
-		backgroundColor: '#7C4DFF', // 보라색 버튼 배경
-		width: 60, // 버튼 크기
-		height: 60,
-		borderRadius: 30, // 원형 버튼
-		justifyContent: 'center',
-		alignItems: 'center',
-		shadowColor: '#000', // 그림자 효과
+		shadowColor: '#000',
 		shadowOffset: { width: 0, height: 4 },
 		shadowOpacity: 0.3,
 		shadowRadius: 4,
-		elevation: 8, // 안드로이드 그림자
+		elevation: 8,
+	},
+
+	/// 상단 버튼 스타일
+	horizontalScroll: {
+		marginVertical: 5,
+	},
+	topButton: {
+		backgroundColor: '#7C4DFF',
+		padding: 10,
+		borderRadius: 8,
+		marginHorizontal: 5,
+		alignItems: 'center',
+	},
+	topButtonText: {
+		color: '#fff',
+		fontSize: 14,
+		fontWeight: 'bold',
+	},
+	/////
+
+	runningblock: {
+		width: '100%',
+		maxWidth: 350,
+		alignSelf: 'center',
+		backgroundColor: '#fff',
+		padding: 15,
+		marginBottom: 15,
+		borderRadius: 10,
+		borderLeftWidth: 4,
+		borderRightWidth: 4,
+		borderLeftColor: '#7C4DFF',
+		borderRightColor: '#7C4DFF',
+
+		// 그림자 효과 추가
+		shadowColor: '#000', // 그림자 색상
+		shadowOffset: { width: 0, height: 2 }, // 그림자의 위치
+		shadowOpacity: 0.2, // 그림자의 불투명도
+		shadowRadius: 6, // 그림자의 퍼짐 정도
+		elevation: 8, // 안드로이드에서의 그림자 효과
+
+		// 그림자 효과가 강화된 상태
+		marginVertical: 10, // 세로 여백 추가
+	},
+
+	runningblockTitle: {
+		fontSize: 18,
+		fontWeight: 'bold',
+		color: '#333',
 	},
 });

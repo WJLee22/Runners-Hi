@@ -49,7 +49,9 @@ export default function RecruitingScreen() {
 
 		if (runningList.length > 0) {
 			return (
-				<ScrollView style={{ flex: 1, width: '95%' }}>
+				<ScrollView
+					style={{ flex: 1, width: '100%', backgroundColor: '#EDE7F6' }}
+				>
 					<FlatList
 						data={runningList}
 						keyExtractor={(item) => item.id.toString()} // id를 문자열로 변환하여 고유 키로 사용
@@ -99,7 +101,9 @@ export default function RecruitingScreen() {
 	};
 
 	return (
-		<View style={{ flex: 1 }}>
+		<View style={{ flex: 1, backgroundColor: '#f7f7f7' }}>
+			{' '}
+			{/* 전체 배경색을 변경 */}
 			<View style={styles.center}>{renderParticipants()}</View>
 		</View>
 	);
@@ -110,18 +114,20 @@ const styles = StyleSheet.create({
 	center: {
 		flex: 1,
 		alignItems: 'center',
-		padding: 10,
+		backgroundColor: '#f1f1f1', // 중앙 컨테이너 배경색 변경
 	},
 
 	// 각 항목을 담을 컨테이너 스타일
 	container: {
-		width: '100%',
+		width: '90%',
 		padding: 20,
-		backgroundColor: '#fff',
+		backgroundColor: '#fff', // 항목의 배경색을 흰색으로 설정
 		borderRadius: 10, // 모서리 둥글게 처리
+		marginTop: 15,
 		marginBottom: 15, // 각 항목 간의 간격
 		shadowColor: '#000', // 음영 효과
 		shadowOffset: { width: 0, height: 2 },
+		margin: 'auto',
 		shadowOpacity: 0.25,
 		shadowRadius: 3.5,
 		elevation: 5, // 안드로이드 음영 효과
@@ -198,7 +204,6 @@ const styles = StyleSheet.create({
 
 	// 참가자가 없을 때 메시지를 담을 컨테이너
 	noParticipantsContainer: {
-		justifyContent: 'center',
 		alignItems: 'center',
 		marginTop: 20,
 	},
