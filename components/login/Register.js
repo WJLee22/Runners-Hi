@@ -1,14 +1,21 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore'; // Firestore 관련 추가
+import { db } from '../firebase/firebase'; // Firestore 연결
 
 const Register = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [name, setName] = useState(''); // 이름 필드 추가
 
   const handleRegister = async () => {
-    // 비밀번호 일치 여부 확인
+    if (!name) {
+      Alert.alert('오류', '이름을 입력해주세요.');
+      return;
+    }
+
     if (password !== confirmPassword) {
       Alert.alert('오류', '비밀번호가 일치하지 않습니다.');
       return;
@@ -16,11 +23,25 @@ const Register = ({ navigation }) => {
 
     try {
       const auth = getAuth();
-      // Firebase 회원가입 처리
-      await createUserWithEmailAndPassword(auth, email, password);
+      // Firebase Authentication에서 회원가입 처리
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+
+      // Firestore에 사용자 정보 저장
+      await setDoc(doc(db, 'users', user.uid), {
+        name: name, // 사용자 이름
+        email: user.email, // 사용자 이메일
+        createdAt: new Date().toISOString(), // 생성 날짜
+      });
+
       Alert.alert('회원가입 성공', '이제 로그인할 수 있습니다.');
       navigation.replace('Login'); // 회원가입 후 Login 화면으로 이동
     } catch (error) {
+      console.error('회원가입 실패:', error);
       Alert.alert('회원가입 실패', error.message);
     }
   };
@@ -28,6 +49,12 @@ const Register = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>회원가입</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="이름"
+        value={name}
+        onChangeText={setName}
+      />
       <TextInput
         style={styles.input}
         placeholder="이메일"
