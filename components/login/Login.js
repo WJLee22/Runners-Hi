@@ -6,6 +6,7 @@ import {
   Image,
   TextInput,
   Alert,
+  TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
@@ -34,15 +35,24 @@ export default function Login({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       {/* 로고 섹션 */}
-      <View style={styles.logoContainer}>
-        <Image
-          source={require('../../assets/applogo.png')}
-          style={styles.logoImage}
-        />
-        <Text style={styles.logoText}>With Runners Hi,</Text>
-        <Text style={styles.logoText}>Let's experience runner's high.</Text>
+      <View style={styles.login_logo}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Image
+            source={require('../../assets/applogo.png')}
+            style={styles.image}
+          ></Image>
+        </View>
+        <View style={{ textAlign: 'center' }}>
+          <Text style={styles.logo_text}>With Runners Hi,</Text>
+          <Text style={styles.logo_text}>Let's experience runner's high.</Text>
+        </View>
       </View>
-
       {/* 로그인 섹션 */}
       <View style={styles.loginContainer}>
         <Text style={styles.header}>로그인</Text>
@@ -61,9 +71,18 @@ export default function Login({ navigation }) {
           onChangeText={(text) => setPassword(text)}
           secureTextEntry
         />
+
+        {/* 버튼 섹션 */}
         <View style={styles.buttonContainer}>
-          <Button title="로그인" onPress={handleLogin} />
-          <Button title="회원가입" onPress={handleNavigateToRegister} />
+          <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <Text style={styles.buttonText}>로그인</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: '#6C63FF' }]} // 회원가입 버튼 색상
+            onPress={handleNavigateToRegister}
+          >
+            <Text style={styles.buttonText}>회원가입</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>
@@ -74,7 +93,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    paddingHorizontal: 20, // 전체 화면의 좌우 여백
+    paddingHorizontal: 20, // 화면 좌우 여백
   },
   // 로고 섹션 스타일
   logoContainer: {
@@ -83,21 +102,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
-  logoImage: {
-    width: 120,
-    height: 120,
-    marginBottom: 15,
+  login_logo: {
+    flex: 2,
+    alignItems: 'center',
+    alignContent: 'center',
+    justifyContent: 'center',
+    gap: 50,
   },
-  logoText: {
+  logo_text: {
     fontSize: 18,
-    fontWeight: '500',
+    fontWeight: 500,
     textAlign: 'center',
-    color: '#333',
   },
   // 로그인 섹션 스타일
   loginContainer: {
     flex: 3,
-    justifyContent: 'center',
     alignItems: 'center',
   },
   header: {
@@ -115,10 +134,22 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     fontSize: 16,
   },
+  // 버튼 섹션 스타일
   buttonContainer: {
-    width: '100%',
     marginTop: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    width: '100%',
+    gap: 15, // 버튼 간격
+  },
+  button: {
+    backgroundColor: '#7C4DFF', // 보라색 버튼
+    paddingVertical: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    width: '100%',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
