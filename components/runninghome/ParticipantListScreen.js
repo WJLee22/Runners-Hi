@@ -6,14 +6,35 @@ import {
 	TouchableOpacity,
 	StyleSheet,
 	Alert,
+	Image,
 } from 'react-native';
 
 // 더미 참가자 데이터 (닉네임, 러닝 페이스 등 포함)
 const participants = [
-	{ id: '1', name: 'User1', pace: '5:30/km' },
-	{ id: '2', name: 'User2', pace: '6:00/km' },
-	{ id: '3', name: 'User3', pace: '5:15/km' },
-	{ id: '4', name: 'User4', pace: '6:30/km' },
+	{
+		id: '1',
+		name: 'User1',
+		pace: '5:30/km',
+		image: 'https://placekitten.com/50/50',
+	},
+	{
+		id: '2',
+		name: 'User2',
+		pace: '6:00/km',
+		image: 'https://placekitten.com/51/51',
+	},
+	{
+		id: '3',
+		name: 'User3',
+		pace: '5:15/km',
+		image: 'https://placekitten.com/52/52',
+	},
+	{
+		id: '4',
+		name: 'User4',
+		pace: '6:30/km',
+		image: 'https://placekitten.com/53/53',
+	},
 ];
 
 export default function ParticipantListScreen() {
@@ -39,8 +60,11 @@ export default function ParticipantListScreen() {
 
 	const renderItem = ({ item }) => (
 		<View style={styles.participantCard}>
-			<Text style={styles.participantName}>{item.name}</Text>
-			<Text style={styles.participantPace}>페이스: {item.pace}</Text>
+			<Image source={{ uri: item.image }} style={styles.profileImage} />
+			<View style={styles.participantInfo}>
+				<Text style={styles.participantName}>{item.name}</Text>
+				<Text style={styles.participantPace}>페이스: {item.pace}</Text>
+			</View>
 
 			{currentUser === 'User1' && ( // 방장만 강퇴 가능
 				<TouchableOpacity
@@ -55,7 +79,6 @@ export default function ParticipantListScreen() {
 
 	return (
 		<View style={styles.container}>
-			<Text style={styles.title}>참가자 목록</Text>
 			<FlatList
 				data={participants}
 				keyExtractor={(item) => item.id}
@@ -69,26 +92,31 @@ export default function ParticipantListScreen() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#EDE7F6', // 연한 보라색 배경
+		backgroundColor: '#D1C4E9', // 연한 보라색 배경
 		paddingHorizontal: 15, // 좌우 여백 추가
-	},
-	title: {
-		fontSize: 22, // 제목 크기 약간 축소
-		fontWeight: 'bold',
-		color: '#673AB7', // 보라색 텍스트
-		marginBottom: 15, // 제목 아래 여백 줄임
-		textAlign: 'center',
+		paddingTop: 20, // 상단 여백 추가 (유저 컴포넌트가 위에 붙지 않게)
 	},
 	listContainer: {
 		paddingBottom: 10, // 리스트 아래 여백
 	},
 	participantCard: {
-		backgroundColor: '#673AB7', // 보라색 카드 배경
+		backgroundColor: '#B39DDB', // 부드럽고 연한 보라색 카드 배경
 		paddingVertical: 12, // 위아래 여백 줄임
 		paddingHorizontal: 15, // 좌우 여백 추가
 		marginBottom: 8, // 카드 간격 좁힘
 		borderRadius: 10,
-		alignItems: 'center',
+		flexDirection: 'row', // 가로 방향 정렬
+		alignItems: 'center', // 세로 중앙 정렬
+		justifyContent: 'space-between', // 아이템 간 간격 조정
+	},
+	profileImage: {
+		width: 40,
+		height: 40,
+		borderRadius: 20, // 동그란 이미지
+		marginRight: 15, // 이미지와 텍스트 간격
+	},
+	participantInfo: {
+		flex: 1, // 텍스트 영역 확장
 	},
 	participantName: {
 		color: 'white',
@@ -101,9 +129,8 @@ const styles = StyleSheet.create({
 		marginVertical: 3, // 여백 줄임
 	},
 	kickButton: {
-		marginTop: 8, // 위 여백 줄임
-		backgroundColor: '#FF5722', // 강퇴 버튼 색상 (빨간색)
-		paddingVertical: 4, // 세로 크기 줄임
+		backgroundColor: '#FF7043', // 부드러운 오렌지 색상으로 변경
+		paddingVertical: 6, // 세로 크기 줄임
 		paddingHorizontal: 12, // 좌우 크기 줄임
 		borderRadius: 20,
 		justifyContent: 'center',

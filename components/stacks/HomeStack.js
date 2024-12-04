@@ -15,12 +15,7 @@ export default function HomeStack() {
 				name="HomeScreen"
 				component={Home}
 				options={{
-					headerTitle: () => (
-						<Image
-							source={require('../../assets/applogo.png')} // logo.png 이미지 경로
-							style={{ width: 129, height: 50 }} // 이미지 크기 조절
-						/>
-					),
+					headerShown: null,
 					headerLeft: null, // 뒤로가기 버튼 숨기기
 				}}
 			/>

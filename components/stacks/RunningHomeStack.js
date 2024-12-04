@@ -13,12 +13,7 @@ export default function RunningHomeStack() {
 				name="RunningHome"
 				component={RunningHome}
 				options={{
-					headerTitle: () => (
-						<Image
-							source={require('../../assets/applogo.png')}
-							style={{ width: 129, height: 50 }}
-						/>
-					),
+					headerShown: null,
 				}}
 			/>
 		</Stack.Navigator>
