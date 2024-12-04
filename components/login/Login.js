@@ -20,10 +20,9 @@ export default function Login({ navigation }) {
     const auth = getAuth();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      Alert.alert('로그인 성공', '메인 화면으로 이동합니다.');
       navigation.replace('MainApp'); // 메인 화면으로 이동
     } catch (error) {
-      Alert.alert('로그인 실패', error.message); // 로그인 실패 메시지 출력
+      Alert.alert('아이디, 비밀번호를 확인해주세요.'); // 로그인 실패 메시지 출력
     }
   };
 
