@@ -133,7 +133,6 @@ const styles = StyleSheet.create({
 		paddingVertical: 6, // 세로 크기 줄임
 		paddingHorizontal: 12, // 좌우 크기 줄임
 		borderRadius: 20,
-		justifyContent: 'center',
 		alignItems: 'center',
 	},
 	kickButtonText: {
