@@ -154,7 +154,21 @@ export default function Home({ navigation, route }) {
 	return (
 		<View style={styles.container}>
 			{/*<Button title="날짜순 정렬" onPress={sortRunningListByDate} />*/}
-			<Button title="곧 시작하는 러닝순" onPress={sortRunningListByDateTime} />
+			<ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
+				<TouchableOpacity style={styles.topButton} onPress={sortRunningListByDateTime}>
+					<Text style={styles.topButtonText}>곧 시작하는 러닝순</Text>
+				</TouchableOpacity>
+				<TouchableOpacity style={styles.topButton} onPress={sortRunningListByDateTime}>
+					<Text style={styles.topButtonText}>곧 시작하는 러닝순</Text>
+				</TouchableOpacity>
+				<TouchableOpacity style={styles.topButton} onPress={sortRunningListByDateTime}>
+					<Text style={styles.topButtonText}>곧 시작하는 러닝순</Text>
+				</TouchableOpacity>
+				<TouchableOpacity style={styles.topButton} onPress={sortRunningListByDateTime}>
+					<Text style={styles.topButtonText}>곧 시작하는 러닝순</Text>
+				</TouchableOpacity>
+				{/* 다른 버튼들 추가 */}
+			</ScrollView>
 			<ScrollView
 				refreshControl={
 					<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -198,6 +212,24 @@ const styles = StyleSheet.create({
 		shadowRadius: 4,
 		elevation: 8,
 	},
+
+	/// 상단 버튼 스타일
+	horizontalScroll: {
+		marginVertical: 5,
+	},
+	topButton: {
+		backgroundColor: '#7C4DFF',
+		padding: 10,
+		borderRadius: 8,
+		marginHorizontal: 5,
+		alignItems: 'center',
+	},
+	topButtonText: {
+		color: '#fff',
+		fontSize: 14,
+		fontWeight: 'bold',
+	},
+	/////
 
 	runningblock: {
 		width: '100%',
