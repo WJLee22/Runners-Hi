@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -20,16 +20,21 @@ export default function ProfileEdit({ navigation, route }) {
   // 상태 관리
   const [nickname, setNickname] = useState(profile.nickname || '');
   const [statusMessage, setStatusMessage] = useState(profile.statusMessage || '');
-  const [selectedPace, setSelectedPace] = useState(profile.pace || '');
-  const [selectedPlaces, setSelectedPlaces] = useState(profile.places || []);
-  const [selectedStyle, setSelectedStyle] = useState(profile.style || '');
+  const [gender, setGender] = useState(profile.gender || '남성'); // 성별 상태
+  const [birthYear, setBirthYear] = useState(profile.birthYear || '2001'); // 출생년도 상태
+  const [selectedPace, setSelectedPace] = useState(profile.pace || ''); // 페이스 상태
+  const [selectedPlaces, setSelectedPlaces] = useState(profile.places || []); // 장소 상태
+  const [selectedStyle, setSelectedStyle] = useState(profile.style || ''); // 스타일 상태
 
   // 모달 상태
+  const [isGenderModalVisible, setGenderModalVisible] = useState(false);
+  const [isBirthYearModalVisible, setBirthYearModalVisible] = useState(false);
   const [isPaceModalVisible, setPaceModalVisible] = useState(false);
   const [isPlaceModalVisible, setPlaceModalVisible] = useState(false);
   const [isStyleModalVisible, setStyleModalVisible] = useState(false);
 
   // 옵션 데이터
+  const genderOptions = ['남성', '여성'];
   const paceOptions = ['5.0 이하 분/km', '5.5 분/km', '6.0 분/km', '6.0 이상 분/km', '잘 모름 분/km'];
   const placeOptions = ['공원', '강변', '호수', '운동장', '트랙'];
   const styleOptions = ['대화 없이 달리기', '대화하며 달리기', '점점 빠르게 달리기', '중간중간 쉬며 달리기', '일정하게 달리기'];
@@ -48,6 +53,8 @@ export default function ProfileEdit({ navigation, route }) {
     const updatedProfile = {
       nickname,
       statusMessage,
+      gender,
+      birthYear,
       pace: selectedPace,
       places: selectedPlaces,
       style: selectedStyle,
@@ -67,20 +74,70 @@ export default function ProfileEdit({ navigation, route }) {
     <ScrollView contentContainerStyle={styles.container}>
       {/* 헤더 */}
       <View style={styles.header}>
-        <Text style={styles.title}>프로필 수정</Text>
       </View>
 
       {/* 프로필 섹션 */}
       <View style={styles.profileSection}>
         <View style={styles.profileImagePlaceholder}>
-        <Image
-          source={require('../../assets/profile.png')}
-          style={styles.profileImage}
-        />
+          <Image
+            source={require('../../assets/profile.png')}
+            style={styles.profileImage}
+          />
         </View>
-        <Text style={styles.genderText}>남성</Text>
-        <Text style={styles.birthYearText}>2001년생</Text>
+
+        {/* 성별 변경 */}
+        <TouchableOpacity onPress={() => setGenderModalVisible(true)}>
+          <Text style={styles.genderText}>{gender}</Text>
+        </TouchableOpacity>
+
+        {/* 출생년도 변경 */}
+        <TouchableOpacity onPress={() => setBirthYearModalVisible(true)}>
+          <Text style={styles.birthYearText}>{birthYear}년생</Text>
+        </TouchableOpacity>
       </View>
+
+      {/* 성별 모달 */}
+      <Modal isVisible={isGenderModalVisible}>
+        <View style={styles.modalContent}>
+          {genderOptions.map((option) => (
+            <TouchableOpacity
+              key={option}
+              style={styles.modalOption}
+              onPress={() => {
+                setGender(option);
+                setGenderModalVisible(false);
+              }}
+            >
+              <Text style={styles.modalText}>{option}</Text>
+            </TouchableOpacity>
+          ))}
+          <TouchableOpacity
+            style={styles.closeModalButton}
+            onPress={() => setGenderModalVisible(false)}
+          >
+            <Text style={styles.closeModalText}>닫기</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+
+      {/* 출생년도 모달 */}
+      <Modal isVisible={isBirthYearModalVisible}>
+        <View style={styles.modalContent}>
+          <TextInput
+            style={styles.input}
+            placeholder="출생년도 입력"
+            keyboardType="numeric"
+            value={birthYear}
+            onChangeText={(value) => setBirthYear(value)}
+          />
+          <TouchableOpacity
+            style={styles.closeModalButton}
+            onPress={() => setBirthYearModalVisible(false)}
+          >
+            <Text style={styles.closeModalText}>확인</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
 
       {/* 닉네임 입력 */}
       <View style={styles.inputSection}>
@@ -104,11 +161,11 @@ export default function ProfileEdit({ navigation, route }) {
         />
       </View>
 
-      {/* 러닝 스타일 */}
+      {/* 러닝 스타일 설정 */}
       <View style={styles.runningStyleSection}>
         <Text style={styles.sectionTitle}>러닝 스타일</Text>
 
-        {/* 페이스 */}
+        {/* 페이스 선택 */}
         <TouchableOpacity
           style={styles.optionBox}
           onPress={() => setPaceModalVisible(true)}
@@ -132,7 +189,7 @@ export default function ProfileEdit({ navigation, route }) {
           </View>
         </Modal>
 
-        {/* 장소 */}
+        {/* 장소 선택 */}
         <TouchableOpacity
           style={styles.optionBox}
           onPress={() => setPlaceModalVisible(true)}
@@ -168,7 +225,7 @@ export default function ProfileEdit({ navigation, route }) {
           </View>
         </Modal>
 
-        {/* 스타일 */}
+        {/* 스타일 선택 */}
         <TouchableOpacity
           style={styles.optionBox}
           onPress={() => setStyleModalVisible(true)}
@@ -204,7 +261,7 @@ export default function ProfileEdit({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#EDE7F6',
     padding: 16,
   },
   header: {
@@ -228,13 +285,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 8,
   },
-  addPhotoText: {
-    fontSize: 24,
-    color: '#6200ea',
-  },
-  addPhotoText1: {
-    fontSize: 48,
-    color: '#6200ea',
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
   },
   genderText: {
     fontSize: 16,
@@ -254,14 +308,10 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     padding: 8,
     marginTop: 8,
+    textAlign: 'center',
   },
   runningStyleSection: {
     marginBottom: 24,
-  },
-  profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
   },
   sectionTitle: {
     fontSize: 18,
@@ -281,27 +331,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 20,
     borderRadius: 8,
+    alignItems: 'center',
   },
   modalOption: {
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
+    width: '100%',
   },
   modalText: {
     fontSize: 16,
-    color: '#000',
-  },
-  selectedModalText: {
-    fontWeight: 'bold',
-    color: '#6200ea',
+    textAlign: 'center',
   },
   closeModalButton: {
-    marginTop: 16,
-    alignItems: 'center',
+    marginTop: 20,
+    backgroundColor: '#6200ea',
+    padding: 10,
+    borderRadius: 8,
   },
   closeModalText: {
+    color: '#fff',
     fontSize: 16,
-    color: '#6200ea',
+    textAlign: 'center',
   },
   saveButton: {
     backgroundColor: '#6200ea',
@@ -313,5 +364,9 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  selectedModalText: {
+    fontWeight: 'bold',
+    color: '#6200ea',
   },
 });
