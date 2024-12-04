@@ -13,31 +13,36 @@ import {
   Keyboard,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import {
-  addDoc,
-  collection,
-  doc,
-  updateDoc,
-  arrayUnion,
-} from 'firebase/firestore'; // Firestore 추가
-import { getAuth } from 'firebase/auth'; // Firebase Auth 추가
-import { db } from '../firebase/firebase'; // Firestore 연결
 
 import PlaceChoice from './course/PlaceChoice';
 import CourseChoice from './course/CourseChoice';
 
-export default function CreateRunning({ navigation }) {
+import { NavigationContainer } from '@react-navigation/native';
+
+const CreateRunning = ({ navigation }) => {
+  //러닝방 제목
   const [title, setTitle] = useState('');
+  //러닝 날짜
   const [date, setDate] = useState(new Date());
+  //러닝 시간
   const [time, setTime] = useState(new Date());
+  //러닝 시작 장소
   const [place, setPlace] = useState('');
+  //러닝 코스
   const [course, setCourse] = useState('');
+  //러닝 인원
   const [person, setPersons] = useState('');
+  //러닝 내용
   const [content, setContent] = useState('');
+  // Modal 컴포넌트 표시 여부
   const [isModalVisible, setIsModalVisible] = useState(false);
+  // 러닝 참여 승인 여부
   const [isParticipationAccept, setIsParticipationAccept] = useState(false);
+  // DatePicker 컴포넌트를 보여줄지 여부
   const [showDatePicker, setShowDatePicker] = useState(false);
+  // TimePicker 컴포넌트를 보여줄지 여부
   const [showTimePicker, setShowTimePicker] = useState(false);
+
   const [showPlaceChoice, setShowPlaceChoice] = useState(false);
   const [showCourseChoice, setShowCourseChoice] = useState(false);
   const [markers, setMarkers] = useState();
@@ -51,10 +56,12 @@ export default function CreateRunning({ navigation }) {
     return `${year}.${month}.${day} ${dayOfWeek}요일`;
   };
 
+  // DateTimePicker를 통해서 날짜선택 or 닫기 시 이벤트 처리
+  // selectedDate => 선택한 날짜값
   const dateChangeHandler = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShowDatePicker(false);
-    setDate(currentDate);
+    const currentDate = selectedDate || date; // 날짜를 선택했으면 그 값으로, 선택안했으면 현재값으로 설정.유지
+    setShowDatePicker(false); //DatePicker 닫기
+    setDate(currentDate); //선택한 날짜값으로 설정 -> 재렌더링 -> 선택한 날짜값이 디바이스에 표시됨
   };
 
   const timeChangeHandler = (event, selectedTime) => {
@@ -64,72 +71,65 @@ export default function CreateRunning({ navigation }) {
   };
 
   const handlePlaceChoice = () => {
-    setShowPlaceChoice(true);
+    setShowPlaceChoice(true); // 장소 선택 화면을 보여준다
   };
 
   const handleCourseChoice = () => {
     if (markers) {
-      setShowCourseChoice(true);
+      setShowCourseChoice(true); // 코스 선택 화면을 보여준다
     }
   };
 
-  const createRunningHandler = async () => {
-    if (!title || !place || !course || !person || !content) {
-      Alert.alert('필수 입력 항목을 모두 입력해주세요!');
-      return;
-    }
+  const placeChoiceHandler = () => {
+    // 러닝을 시작할 장소를 선택하는 페이지로 이동.(PlaceChoice.js 정의)
+    navigation.navigate(`PlaceChoice`);
+  };
 
-    try {
-      const auth = getAuth();
-      const userId = auth.currentUser?.uid;
+  const courseChoiceHandler = () => {
+    // 선택한 장소를 기반으로 코스 경로를 선택하는 페이지로 이동.( CourseChoice.js 정의)
+    navigation.navigate('CourseChoice', { place });
+  };
 
-      if (!userId) {
-        Alert.alert('오류', '로그인이 필요합니다.');
-        return;
-      }
-
-      const runningData = {
-        title,
-        date: formatDate(date),
-        time: time.toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit',
-        }),
-        place,
-        course: `${course}km`,
-        person: parseInt(person, 10),
-        content,
-        participationAccept: isParticipationAccept,
-        markers, // 추가된 마커 데이터 저장
-        creatorId: userId, // 생성한 사용자 ID
-      };
-
-      // 러닝방 추가
-      const runningDocRef = await addDoc(
-        collection(db, 'runnings'),
-        runningData
-      );
-
-      // 해당 사용자의 데이터에 생성된 러닝방 ID 추가
-      const userDocRef = doc(db, 'users', userId);
-      await updateDoc(userDocRef, {
-        createdRunnings: arrayUnion(runningDocRef.id), // 생성된 방 ID를 배열로 추가
-      });
-
-      Alert.alert('러닝방이 성공적으로 생성되었습니다!');
-      navigation.navigate('HomeScreen');
-    } catch (error) {
-      console.error('러닝방 생성 중 오류:', error);
-      Alert.alert('러닝방 생성에 실패했습니다. 다시 시도해주세요.');
-    }
+  // 러닝방 생성 버튼 클릭 시 호출되는 함수
+  const createRunningHandler = () => {
+    Alert.alert('모집 글을 등록하시겠습니까?', '', [
+      {
+        text: '취소',
+        onPress: () => {},
+        style: 'cancel',
+      },
+      {
+        text: '확인',
+        onPress: () => {
+          // 고유한 ID 생성 (예: 현재 시간 + 랜덤 숫자)
+          const id = Date.now() + Math.floor(Math.random() * 1000);
+          const runningData = {
+            id, // runningData에 id 추가
+            title,
+            date: formatDate(date),
+            time: time.toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            }),
+            place,
+            course,
+            person,
+            content,
+          };
+          navigation.navigate('HomeScreen', { runningData });
+        },
+      },
+    ]);
   };
 
   useEffect(() => {
-    console.log('Markers:', markers);
-    console.log('Course:', course);
+    console.log(markers);
+    console.log(course);
   }, [markers]);
 
   return (
+    // 러닝방을 구성하는 화면의 UI
+
     <View style={styles.container}>
       <Text>제목</Text>
       <TextInput
@@ -140,6 +140,8 @@ export default function CreateRunning({ navigation }) {
       />
 
       <Text>날짜</Text>
+
+      {/* TextInput를 감싸는 TouchableOpacity => TextInput 클릭을 통해 ShowDatePicker = true -> 재렌더링 -> DatePicker 컴포넌트 화면에 출력됨 */}
       <TouchableOpacity onPress={() => setShowDatePicker(true)}>
         <TextInput
           style={styles.input}
@@ -147,6 +149,7 @@ export default function CreateRunning({ navigation }) {
           editable={false}
         />
       </TouchableOpacity>
+      {/*showDatePicker === true, 날짜선택피커 화면에 렌더링 */}
       {showDatePicker && (
         <DateTimePicker
           value={date}
@@ -196,11 +199,12 @@ export default function CreateRunning({ navigation }) {
         />
       </TouchableOpacity>
 
+      {/* 조건부로 PlaceChoice 또는 CourseChoice 화면 렌더링 */}
       {showPlaceChoice && (
         <View style={styles.modal}>
           <PlaceChoice
-            setPlace={setPlace}
-            onClose={() => setShowPlaceChoice(false)}
+            setPlace={setPlace} // 장소 선택 후 place 상태 변경
+            onClose={() => setShowPlaceChoice(false)} // 화면 닫기
             setMarkers={setMarkers}
           />
         </View>
@@ -212,8 +216,8 @@ export default function CreateRunning({ navigation }) {
             <CourseChoice
               markers={markers}
               navigation={navigation}
-              setCourse={setCourse}
-              onClose={() => setShowCourseChoice(false)}
+              setCourse={setCourse} // 코스 선택 후 course 상태 변경
+              onClose={() => setShowCourseChoice(false)} // 화면 닫기
               setMarkers={setMarkers}
             />
           </View>
@@ -231,26 +235,47 @@ export default function CreateRunning({ navigation }) {
       />
 
       <Text>러닝 참여 관리</Text>
+      {/*Switch 컴포넌트(토글)를 통해 러닝 참여 승인여부를 결정할 수 있음*/}
       <Switch
         value={isParticipationAccept}
-        onValueChange={() => setIsParticipationAccept(!isParticipationAccept)}
+        onValueChange={() => {
+          setIsParticipationAccept(!isParticipationAccept);
+          setIsModalVisible(true);
+        }}
       />
 
+      <Modal
+        visible={isModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setIsModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text>러닝 참여시 주최자의 승인과정을 거칩니다</Text>
+            <Button title="확인" onPress={() => setIsModalVisible(false)} />
+          </View>
+        </View>
+      </Modal>
+
       <Text>내용을 입력하세요</Text>
+
       <TextInput
         style={styles.input}
         value={content}
         onChangeText={setContent}
         multiline
-        placeholder="러닝방 내용을 입력하세요"
+        placeholder="여기에 입력하세요"
         onSubmitEditing={Keyboard.dismiss}
         returnKeyType="done"
       />
-
+      <TouchableOpacity style={styles.button} onPress={Keyboard.dismiss}>
+        <Text style={styles.buttonText}>확인</Text>
+      </TouchableOpacity>
       <Button title="완료" onPress={createRunningHandler} />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -268,7 +293,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    zIndex: 10,
+    zIndex: 10, // 기존 화면 위로 렌더링
   },
   input: {
     height: 40,
@@ -277,4 +302,18 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingHorizontal: 8,
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
 });
+
+export default CreateRunning;

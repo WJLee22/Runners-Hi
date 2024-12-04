@@ -229,7 +229,7 @@ export default function CourseChoice(props) {
 			{/* 누적 거리 표시 */}
 			<View style={styles.distanceContainer}>
 				<Text style={styles.distanceText}>
-					총 거리:{' '}
+					총 거리:
 					{totalDistance !== undefined ? totalDistance.toFixed(2) : '0'} km
 				</Text>
 			</View>

@@ -16,7 +16,6 @@ import { app } from '../firebase/firebase';
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
   const handleLogin = async () => {
     const auth = getAuth(app);
     try {
