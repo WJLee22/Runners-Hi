@@ -20,9 +20,8 @@ export default function Login({ navigation }) {
 	const handleLogin = async () => {
 		const auth = getAuth(app);
 		try {
-			await signInWithEmailAndPassword(auth, email, password);
-			console.log(email, password);
-			Alert.alert('로그인 성공', '메인 화면으로 이동합니다.');
+			// await signInWithEmailAndPassword(auth, email, password);
+			// console.log(email, password);
 			navigation.replace('MainApp'); // 메인 화면으로 이동
 		} catch (error) {
 			console.error('Firebase Error:', error); // 에러 내용 출력

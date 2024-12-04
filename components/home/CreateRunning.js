@@ -116,20 +116,15 @@ const CreateRunning = ({ navigation }) => {
 						person,
 						content,
 					};
+
 					navigation.navigate('HomeScreen', { runningData });
 				},
 			},
 		]);
 	};
 
-	useEffect(() => {
-		console.log(markers);
-		console.log(course);
-	}, [markers]);
-
 	return (
 		// 러닝방을 구성하는 화면의 UI
-
 		<View style={styles.container}>
 			<Text>제목</Text>
 			<TextInput
