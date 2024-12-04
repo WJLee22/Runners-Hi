@@ -46,7 +46,7 @@ export default function MyPage({ navigation }) {
           setProfile((prevProfile) => ({
             ...prevProfile,
             nickname: userData.name || prevProfile.nickname, // name 필드 사용
-            statusMessage: userData.statusMessage || prevProfile.statusMessage, // name 필드 사용
+            statusMessage: userData.statusMessage || prevProfile.statusMessage,
           }));
         } else {
           console.error('사용자 문서가 없습니다.');
@@ -57,7 +57,12 @@ export default function MyPage({ navigation }) {
     };
 
     fetchUserProfile();
-  }, []);
+  }, []); // 빈 배열로 실행 시점 명시
+
+  useEffect(() => {
+    console.log('프로필 업데이트:', profile);
+  }, [profile]);
+
   // AsyncStorage에서 메모 데이터 로드
   useEffect(() => {
     const loadMemoData = async () => {

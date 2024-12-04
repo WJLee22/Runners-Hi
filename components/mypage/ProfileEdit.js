@@ -9,11 +9,11 @@ import {
   ScrollView,
 } from 'react-native';
 import Modal from 'react-native-modal';
-import { getAuth } from 'firebase/auth';
-import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '../firebase/firebase'; // 경로를 프로젝트에 맞게 수정하세요.
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ProfileEdit({ navigation, route }) {
+  const STORAGE_KEY = 'RUNNING_STYLE';
+
   // MyPage에서 전달받은 데이터
   const { profile, setProfile } = route.params;
 
@@ -60,7 +60,7 @@ export default function ProfileEdit({ navigation, route }) {
   // 저장 버튼 동작
   const handleSave = async () => {
     const updatedProfile = {
-      name: nickname, // 닉네임을 'name' 필드로 저장
+      nickname,
       statusMessage,
       pace: selectedPace,
       places: selectedPlaces,
@@ -68,23 +68,12 @@ export default function ProfileEdit({ navigation, route }) {
     };
 
     try {
-      const auth = getAuth();
-      const userId = auth.currentUser?.uid;
-
-      if (!userId) {
-        alert('로그인이 필요합니다.');
-        return;
-      }
-
-      const userDocRef = doc(db, 'users', userId);
-      await updateDoc(userDocRef, updatedProfile); // Firestore에 업데이트
-
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedProfile)); // AsyncStorage에 저장
       setProfile(updatedProfile); // MyPage 상태 업데이트
-      alert('프로필이 성공적으로 업데이트되었습니다!');
+      alert('프로필 데이터가 저장되었습니다!');
       navigation.goBack(); // 이전 화면으로 이동
     } catch (error) {
-      console.error('Failed to update profile data:', error);
-      alert('프로필 업데이트에 실패했습니다. 다시 시도해주세요.');
+      console.error('Failed to save profile data:', error);
     }
   };
 
@@ -232,6 +221,7 @@ export default function ProfileEdit({ navigation, route }) {
     </ScrollView>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
