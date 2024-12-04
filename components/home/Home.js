@@ -8,7 +8,7 @@ import {
 	Image,
 	StyleSheet,
 	ScrollView,
-	RefreshControl,
+	RefreshControl, Text
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -134,7 +134,7 @@ export default function Home({ navigation, route }) {
 				))}
 			</ScrollView>
 			<TouchableOpacity style={styles.addButton} onPress={handleAddRunning}>
-				<Icon name="plus" size={28} color="#FFFFFF" /> {/* 플러스 아이콘 */}
+				<Text><Icon name="plus" size={28} color="#FFFFFF" />{/* 플러스 아이콘 */}</Text>
 			</TouchableOpacity>
 		</View>
 	);
