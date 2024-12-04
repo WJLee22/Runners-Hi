@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -7,52 +7,113 @@ import {
   StyleSheet,
   Alert,
   Image,
+  ActivityIndicator,
 } from 'react-native';
+import { getAuth } from 'firebase/auth';
+import { db } from '../firebase/firebase';
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  arrayRemove,
+  collection,
+  getDocs,
+} from 'firebase/firestore';
 
-// 더미 참가자 데이터 (닉네임, 러닝 페이스 등 포함)
-const participants = [
-  {
-    id: '1',
-    name: 'User1',
-    pace: '5:30/km',
-    image: 'https://placekitten.com/50/50',
-  },
-  {
-    id: '2',
-    name: 'User2',
-    pace: '6:00/km',
-    image: 'https://placekitten.com/51/51',
-  },
-  {
-    id: '3',
-    name: 'User3',
-    pace: '5:15/km',
-    image: 'https://placekitten.com/52/52',
-  },
-  {
-    id: '4',
-    name: 'User4',
-    pace: '6:30/km',
-    image: 'https://placekitten.com/53/53',
-  },
-];
+export default function ParticipantListScreen({ route, navigation }) {
+  const { runningId } = route.params; // 전달받은 러닝 ID
+  const [participants, setParticipants] = useState([]);
+  const [currentUserId, setCurrentUserId] = useState(null);
+  const [isCreator, setIsCreator] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-export default function ParticipantListScreen() {
-  const [currentUser, setCurrentUser] = useState('User1'); // 방장
+  useEffect(() => {
+    const fetchParticipants = async () => {
+      setLoading(true);
+      try {
+        const auth = getAuth();
+        const userId = auth.currentUser?.uid;
+        setCurrentUserId(userId);
+
+        if (!userId) {
+          Alert.alert('로그인이 필요합니다.');
+          navigation.goBack();
+          return;
+        }
+
+        // 러닝 정보 가져오기
+        const runningDocRef = doc(db, 'runnings', runningId);
+        const runningDoc = await getDoc(runningDocRef);
+
+        if (runningDoc.exists()) {
+          const runningData = runningDoc.data();
+          const participantIds = runningData.participants || [];
+          setIsCreator(runningData.creatorId === userId);
+
+          // 참가자 상세 정보 가져오기
+          const participantsData = [];
+          for (const participantId of participantIds) {
+            const userDocRef = doc(db, 'users', participantId);
+            const userDoc = await getDoc(userDocRef);
+            if (userDoc.exists()) {
+              const userData = userDoc.data();
+              participantsData.push({
+                id: participantId,
+                name: userData.name || '이름 없음',
+                pace: userData.pace || '페이스 정보 없음',
+                image: userData.profileImage || null, // 프로필 이미지 URL이 있다고 가정
+              });
+            }
+          }
+          setParticipants(participantsData);
+        } else {
+          Alert.alert('러닝 정보를 가져올 수 없습니다.');
+          navigation.goBack();
+        }
+      } catch (error) {
+        console.error('참가자 정보 가져오기 오류:', error);
+        Alert.alert('오류', '참가자 정보를 가져오는 중 오류가 발생했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchParticipants();
+  }, [runningId]);
 
   // 강퇴 함수
-  const kickUser = (userName) => {
-    Alert.alert('강퇴 확인', `${userName}을 강퇴하시겠습니까?`, [
+  const kickUser = (participantId, participantName) => {
+    Alert.alert('강퇴 확인', `${participantName}님을 강퇴하시겠습니까?`, [
       {
         text: '취소',
         style: 'cancel',
       },
       {
         text: '강퇴',
-        onPress: () => {
-          // 강퇴 로직 (여기서는 간단히 콘솔로 출력)
-          console.log(`${userName}이 강퇴되었습니다.`);
-          // 실제 구현 시, 참가자 목록에서 해당 유저를 삭제하는 코드가 필요합니다.
+        onPress: async () => {
+          try {
+            // 러닝 문서에서 참가자 제거
+            const runningDocRef = doc(db, 'runnings', runningId);
+            await updateDoc(runningDocRef, {
+              participants: arrayRemove(participantId),
+            });
+
+            // 강퇴된 참가자의 joinedRunning에서 러닝 ID 제거
+            const userDocRef = doc(db, 'users', participantId);
+            await updateDoc(userDocRef, {
+              joinedRunning: arrayRemove(runningId),
+            });
+
+            // 참가자 목록에서 제거
+            setParticipants((prevParticipants) =>
+              prevParticipants.filter((p) => p.id !== participantId)
+            );
+
+            Alert.alert('강퇴 완료', `${participantName}님을 강퇴했습니다.`);
+          } catch (error) {
+            console.error('강퇴 실패:', error);
+            Alert.alert('오류', '강퇴 중 오류가 발생했습니다.');
+          }
         },
       },
     ]);
@@ -60,22 +121,39 @@ export default function ParticipantListScreen() {
 
   const renderItem = ({ item }) => (
     <View style={styles.participantCard}>
-      <Image source={{ uri: item.image }} style={styles.profileImage} />
+      {item.image ? (
+        <Image source={{ uri: item.image }} style={styles.profileImage} />
+      ) : (
+        <View style={styles.profilePlaceholder}>
+          <Text style={styles.profilePlaceholderText}>
+            {item.name.charAt(0)}
+          </Text>
+        </View>
+      )}
       <View style={styles.participantInfo}>
         <Text style={styles.participantName}>{item.name}</Text>
         <Text style={styles.participantPace}>페이스: {item.pace}</Text>
       </View>
 
-      {currentUser === 'User1' && ( // 방장만 강퇴 가능
-        <TouchableOpacity
-          style={styles.kickButton}
-          onPress={() => kickUser(item.name)}
-        >
-          <Text style={styles.kickButtonText}>강퇴</Text>
-        </TouchableOpacity>
-      )}
+      {isCreator &&
+        item.id !== currentUserId && ( // 방장만 강퇴 가능하며, 자기 자신은 강퇴 불가
+          <TouchableOpacity
+            style={styles.kickButton}
+            onPress={() => kickUser(item.id, item.name)}
+          >
+            <Text style={styles.kickButtonText}>강퇴</Text>
+          </TouchableOpacity>
+        )}
     </View>
   );
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#673AB7" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -92,52 +170,71 @@ export default function ParticipantListScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#D1C4E9', // 연한 보라색 배경
-    paddingHorizontal: 15, // 좌우 여백 추가
-    paddingTop: 20, // 상단 여백 추가 (유저 컴포넌트가 위에 붙지 않게)
+    backgroundColor: '#D1C4E9',
+    paddingHorizontal: 15,
+    paddingTop: 20,
   },
   listContainer: {
-    paddingBottom: 10, // 리스트 아래 여백
+    paddingBottom: 10,
   },
   participantCard: {
-    backgroundColor: '#B39DDB', // 부드럽고 연한 보라색 카드 배경
-    paddingVertical: 12, // 위아래 여백 줄임
-    paddingHorizontal: 15, // 좌우 여백 추가
-    marginBottom: 8, // 카드 간격 좁힘
+    backgroundColor: '#B39DDB',
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+    marginBottom: 8,
     borderRadius: 10,
-    flexDirection: 'row', // 가로 방향 정렬
-    alignItems: 'center', // 세로 중앙 정렬
-    justifyContent: 'space-between', // 아이템 간 간격 조정
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   profileImage: {
     width: 40,
     height: 40,
-    borderRadius: 20, // 동그란 이미지
-    marginRight: 15, // 이미지와 텍스트 간격
+    borderRadius: 20,
+    marginRight: 15,
+  },
+  profilePlaceholder: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#9575CD',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 15,
+  },
+  profilePlaceholderText: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
   },
   participantInfo: {
-    flex: 1, // 텍스트 영역 확장
+    flex: 1,
   },
   participantName: {
     color: 'white',
-    fontSize: 16, // 폰트 크기 적당히 축소
+    fontSize: 16,
     fontWeight: 'bold',
   },
   participantPace: {
     color: 'white',
-    fontSize: 12, // 텍스트 크기 축소
-    marginVertical: 3, // 여백 줄임
+    fontSize: 12,
+    marginVertical: 3,
   },
   kickButton: {
-    backgroundColor: '#FF7043', // 부드러운 오렌지 색상으로 변경
-    paddingVertical: 6, // 세로 크기 줄임
-    paddingHorizontal: 12, // 좌우 크기 줄임
+    backgroundColor: '#FF7043',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
     borderRadius: 20,
     alignItems: 'center',
   },
   kickButtonText: {
     color: 'white',
-    fontSize: 14, // 텍스트 크기 줄임
+    fontSize: 14,
     fontWeight: 'bold',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
