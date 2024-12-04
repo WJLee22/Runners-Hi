@@ -50,10 +50,38 @@ export default function Home({ navigation, route }) {
 		return () => unsubscribe();
 	}, [navigation]);
 
-	const sortRunningListByDate = () => {
-		const sortedList = [...runningList].sort((a, b) => new Date(a.date.replace(/(\d+)\.(\d+)\.(\d+).*/, '$1-$2-$3')) - new Date(b.date.replace(/(\d+)\.(\d+)\.(\d+).*/, '$1-$2-$3'))); //Date 객체로 변환해서 -> 연산으로 날짜 차이 계산.
+	{ /* 러닝방 리스트를 날짜순으로 정렬하는 함수 */ }
+	// const sortRunningListByDate = () => {
+	// 	const sortedList = [...runningList].sort((a, b) => new Date(a.date.replace(/(\d+)\.(\d+)\.(\d+).*/, '$1-$2-$3')) - new Date(b.date.replace(/(\d+)\.(\d+)\.(\d+).*/, '$1-$2-$3'))); //Date 객체로 변환해서 -> 연산으로 날짜 차이 계산.
+	// 	setRunningList(sortedList);
+	// };
+
+	{ /* 러닝방 리스트를 날짜+시간순으로 정렬하는 함수 */ }
+	const sortRunningListByDateTime = () => {
+		const sortedList = [...runningList].sort((a, b) => {
+			const [aDate] = a.date.split(' ');
+			const [aYear, aMonth, aDay] = aDate.split('.');
+			const [aAmPm, aTime] = a.time.split(' ');
+			const [aHour, aMin] = aTime.split(':');
+
+			const [bDate] = b.date.split(' ');
+			const [bYear, bMonth, bDay] = bDate.split('.');
+			const [bAmPm, bTime] = b.time.split(' ');
+			const [bHour, bMin] = bTime.split(':');
+
+			// 오전/오후에 따라 시간 값 판단
+			const aHourJudge = aAmPm === '오후' && aHour !== '12' ? parseInt(aHour) + 12 : parseInt(aHour);
+			const bHourJudge = bAmPm === '오후' && bHour !== '12' ? parseInt(bHour) + 12 : parseInt(bHour);
+
+			const aTimeInMillis = new Date(aYear, aMonth - 1, aDay, aHourJudge, aMin).getTime();
+			const bTimeInMillis = new Date(bYear, bMonth - 1, bDay, bHourJudge, bMin).getTime();
+
+			return aTimeInMillis - bTimeInMillis;
+		});
 		setRunningList(sortedList);
 	};
+
+
 
 	useEffect(() => {
 		const updateRunningList = async () => {
@@ -125,7 +153,8 @@ export default function Home({ navigation, route }) {
 
 	return (
 		<View style={styles.container}>
-			<Button title="날짜순 정렬" onPress={sortRunningListByDate} />
+			{/*<Button title="날짜순 정렬" onPress={sortRunningListByDate} />*/}
+			<Button title="곧 시작하는 러닝순" onPress={sortRunningListByDateTime} />
 			<ScrollView
 				refreshControl={
 					<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
