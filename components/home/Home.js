@@ -9,10 +9,12 @@ import {
 	StyleSheet,
 	ScrollView,
 	RefreshControl, Text
+
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../firebase/firebase'; // Firestore 연결
 import RunningBlock from './RunningBlock';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // Vector Icons 사용
 
 export default function Home({ navigation, route }) {
 	const [runningList, setRunningList] = useState([]);
@@ -189,12 +191,6 @@ export default function Home({ navigation, route }) {
 		</View>
 	);
 }
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: '#EDE7F6',
-		paddingHorizontal: 10,
-	},
 
 	addButton: {
 		position: 'absolute',
