@@ -18,6 +18,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // Vector I
 import { parse, isToday, isTomorrow, isWithinInterval, addDays } from 'date-fns';
 import { CheckBox } from '@rneui/themed'; // CheckBox 컴포넌트 추가
 
+import * as Location from 'expo-location'; //현재 위치 계산을 위해 추가
+
 export default function Home({ navigation, route }) {
   const [runningList, setRunningList] = useState([]);
   const [refreshing, setRefreshing] = useState(false); // 새로고침 상태
@@ -127,6 +129,44 @@ export default function Home({ navigation, route }) {
     setFilteredRunningList(filteredList);
   }, [selectedDateFilters, runningList]);
 
+  // 사용자의 현재 위치를 가져오는 함수
+  const getCurrentLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync(); // 사용자에게 위치 정보 사용 권한을 요청("위치 권한을 허용해주세요")
+
+    if (status !== 'granted') { // 권한허용 x인 경우 -> null 반환
+      return null;
+    }
+    let location = await Location.getCurrentPositionAsync({}); // 현재 위치 가져오기.
+    return location.coords; // 현재 위치 정보 반환(위도, 경도)
+  };
+
+
+  // 두 지점 간의 거리를 계산하는 함수 (Haversine 공식 사용 -> 두 지점 사이의 대원 거리를 계산하여 거리계산: 지구곡률 반영)
+  const getDistance = (lat1, lng1, lat2, lng2) => {
+    const radius = 6371; // 지구 반지름 (6371km)
+    const difLat = (lat2 - lat1) * Math.PI / 180;
+    const difLon = (lng2 - lng1) * Math.PI / 180;
+
+    const a = 0.5 - Math.cos(difLat) / 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * (1 - Math.cos(difLon)) / 2;
+
+    return radius * 2 * Math.asin(Math.sqrt(a)); // 두 지점 사이의 거리 반환
+  };
+
+  // 러닝방들을 사용자의 현재 위치와의 거리 순으로 정렬하는 함수
+  const sortRunningListByDistance = async () => {
+    const currentLocation = await getCurrentLocation();
+    if (!currentLocation) return;
+
+    const sortedList = [...runningList].sort((a, b) => {
+      const distanceA = getDistance(currentLocation.latitude, currentLocation.longitude, a.markers[0].latitude, a.markers[0].longitude);
+      const distanceB = getDistance(currentLocation.latitude, currentLocation.longitude, b.markers[0].latitude, b.markers[0].longitude);
+      return distanceA - distanceB;
+    });
+
+    setFilteredRunningList(sortedList);
+  };
+
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -136,17 +176,23 @@ export default function Home({ navigation, route }) {
       >
 
         {/* 필터 버튼 컨테이너 */}
-        <View style={styles.dateFilterContainer}>
+        <View style={styles.buttonContainer}>
 
           {/* 날짜 필터 버튼 */}
           <TouchableOpacity style={styles.dateFilterButton} onPress={showDateFilterModal}>
-            <Image source={require('../../assets/calendar.png')} style={styles.dateFilterButtonIcon} />
-            <Text style={styles.dateFilterButtonText}>
+            <Image source={require('../../assets/calendar.png')} style={styles.buttonIcon} />
+            <Text style={styles.buttonText}>
               {selectedDateFilters.length > 0 ? selectedDateFilters.join(', ') : '날짜'}
             </Text>
             <Icon name="chevron-down" size={20} color="#333" />
           </TouchableOpacity>
 
+
+
+          <TouchableOpacity onPress={sortRunningListByDistance} style={styles.distanceSortButton}>
+            <Image source={require('../../assets/distance.png')} style={styles.buttonIcon} />
+            <Text style={styles.buttonText}>거리순</Text>
+          </TouchableOpacity>
           {/* 다른 필터 버튼들 추가될 예정 */}
 
         </View>
@@ -252,14 +298,46 @@ const styles = StyleSheet.create({
     color: '#333',
   },
 
-  // 날짜 필터 버튼 관련 스타일
+  // 날짜 필터, 거리순 등 버튼 관련 스타일
 
-  dateFilterContainer: {
+  buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-start', // 왼쪽 정렬
     marginBottom: 0,
   },
+  buttonText: {
+    fontSize: 14,
+    marginRight: 5,
+    fontWeight: 'bold',
+  },
+  buttonIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 5,
+    marginLeft: 4,
+  },
+  // 날짜 필터 버튼 스타일
   dateFilterButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 5,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    marginTop: 10,
+    marginBottom: 0,
+    marginRight: 10,
+    borderRadius: 20,
+    backgroundColor: '#f8f8f8',
+    shadowColor: '#ddd',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  // 거리순 정렬 버튼 스타일
+  distanceSortButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -277,19 +355,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 4,
   },
-  dateFilterButtonText: {
-    fontSize: 14,
-    marginRight: 5,
-    fontWeight: 'bold',
-  },
-  dateFilterButtonIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 5,
-    marginLeft: 4,
-  },
-
-
 
   // Modal 스타일
   modalOverlay: {
