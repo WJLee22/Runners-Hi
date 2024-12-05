@@ -8,7 +8,8 @@ import {
   Text,
   Modal, // Modal 컴포넌트 추가
   Pressable, // Pressable 컴포넌트 추가 
-  Animated, // Animated 추가
+  Animated,
+  Image // Animated 추가
 } from 'react-native';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase/firebase'; // Firestore 연결
@@ -82,8 +83,8 @@ export default function Home({ navigation, route }) {
   // 날짜 필터 변경 시 호출되는 함수
   const handleDateFilterChange = (filter) => {
     const updatedFilters = selectedDateFilters.includes(filter)
-      ? selectedDateFilters.filter((f) => f !== filter) // 이미 선택된 필터는 제거
-      : [...selectedDateFilters, filter]; // 선택되지 않은 필터는 추가
+      ? selectedDateFilters.filter((f) => f !== filter)
+      : [...selectedDateFilters, filter]; // 선택되지 않은 필터 추가
     setSelectedDateFilters(updatedFilters);
   };
 
@@ -133,14 +134,22 @@ export default function Home({ navigation, route }) {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        {/* 날짜 필터 버튼 */}
-        <TouchableOpacity style={styles.dateFilterButton} onPress={showDateFilterModal}>
-          <Text style={styles.dateFilterButtonText}>
-            {selectedDateFilters.length > 0 ? selectedDateFilters.join(', ') : '날짜'}
-          </Text>
-          <Icon name="chevron-down" size={20} color="#333" />
-        </TouchableOpacity>
 
+        {/* 필터 버튼 컨테이너 */}
+        <View style={styles.dateFilterContainer}>
+
+          {/* 날짜 필터 버튼 */}
+          <TouchableOpacity style={styles.dateFilterButton} onPress={showDateFilterModal}>
+            <Image source={require('../../assets/calendar.png')} style={styles.dateFilterButtonIcon} />
+            <Text style={styles.dateFilterButtonText}>
+              {selectedDateFilters.length > 0 ? selectedDateFilters.join(', ') : '날짜'}
+            </Text>
+            <Icon name="chevron-down" size={20} color="#333" />
+          </TouchableOpacity>
+
+          {/* 다른 필터 버튼들 추가될 예정 */}
+
+        </View>
         {/* 날짜 필터 Modal */}
         <Modal
           transparent={true}
@@ -243,21 +252,44 @@ const styles = StyleSheet.create({
     color: '#333',
   },
 
-  // 날짜 필터 버튼 스타일
+  // 날짜 필터 버튼 관련 스타일
+
+  dateFilterContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start', // 왼쪽 정렬
+    marginBottom: 0,
+  },
   dateFilterButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 10,
+    padding: 5,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
-    marginBottom: 10,
+    marginTop: 10,
+    marginBottom: 0,
+    borderRadius: 20,
+    backgroundColor: '#f8f8f8',
+    shadowColor: '#ddd',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
   },
   dateFilterButtonText: {
-    fontSize: 16,
+    fontSize: 14,
     marginRight: 5,
+    fontWeight: 'bold',
   },
+  dateFilterButtonIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 5,
+    marginLeft: 4,
+  },
+
+
 
   // Modal 스타일
   modalOverlay: {
@@ -292,7 +324,7 @@ const styles = StyleSheet.create({
     padding: 0,
   },
   confirmButton: {
-    backgroundColor: '#7C4DFF',
+    backgroundColor: '#BA68C8',
     padding: 10,
     borderRadius: 5,
     marginTop: 10,
@@ -302,4 +334,5 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
   },
+
 });
