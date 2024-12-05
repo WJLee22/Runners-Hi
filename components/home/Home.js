@@ -156,8 +156,8 @@ export default function Home({ navigation, route }) {
   const sortRunningListByDistance = async () => {
     const currentLocation = await getCurrentLocation();
     if (!currentLocation) return;
-
-    const sortedList = [...runningList].sort((a, b) => {
+    // 선택한 옵션의 날짜 필터링이 적용된 상태에서 + 거리순으로 정렬
+    const sortedList = [...filteredRunningList].sort((a, b) => {
       const distanceA = getDistance(currentLocation.latitude, currentLocation.longitude, a.markers[0].latitude, a.markers[0].longitude);
       const distanceB = getDistance(currentLocation.latitude, currentLocation.longitude, b.markers[0].latitude, b.markers[0].longitude);
       return distanceA - distanceB;
