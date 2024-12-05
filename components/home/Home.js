@@ -1,17 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
-  Button,
-  Alert,
-  TouchableOpacity,
-  Image,
   StyleSheet,
   ScrollView,
   RefreshControl,
+  TouchableOpacity,
 } from 'react-native';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase/firebase'; // Firestore 연결
 import RunningBlock from './RunningBlock';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // Vector Icons 사용
 
 export default function Home({ navigation, route }) {
   const [runningList, setRunningList] = useState([]);
@@ -70,46 +68,23 @@ export default function Home({ navigation, route }) {
       </ScrollView>
       {/* 러닝 추가 버튼 */}
       <TouchableOpacity style={styles.addButton} onPress={handleAddRunning}>
-        <Image
-          source={require('../../assets/plus.png')}
-          style={styles.addButtonIcon}
-        />
+        <Icon name="plus" size={30} color="#fff" />
       </TouchableOpacity>
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  addButton: {
-    position: 'absolute',
-    bottom: 30,
-    right: 30,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 5,
-    padding: 0,
-  },
-  addButtonIcon: {
-    width: '100%',
-    height: '100%',
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#EDE7F6',
+    backgroundColor: '#EDE7F6', // 연보라색 배경
     paddingHorizontal: 10,
   },
-
   addButton: {
     position: 'absolute',
     bottom: 20,
     right: 20,
-    backgroundColor: '#7C4DFF',
+    backgroundColor: '#7C4DFF', // 연보라 계열
     width: 60,
     height: 60,
     borderRadius: 30,
@@ -121,7 +96,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 8,
   },
-
   runningblock: {
     width: '100%',
     maxWidth: 350,
@@ -134,18 +108,13 @@ const styles = StyleSheet.create({
     borderRightWidth: 4,
     borderLeftColor: '#7C4DFF',
     borderRightColor: '#7C4DFF',
-
-    // 그림자 효과 추가
     shadowColor: '#000', // 그림자 색상
     shadowOffset: { width: 0, height: 2 }, // 그림자의 위치
     shadowOpacity: 0.2, // 그림자의 불투명도
     shadowRadius: 6, // 그림자의 퍼짐 정도
     elevation: 8, // 안드로이드에서의 그림자 효과
-
-    // 그림자 효과가 강화된 상태
     marginVertical: 10, // 세로 여백 추가
   },
-
   runningblockTitle: {
     fontSize: 18,
     fontWeight: 'bold',

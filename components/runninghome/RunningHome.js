@@ -202,7 +202,7 @@ export default function RunningHome() {
 const styles = StyleSheet.create({
   header: {
     height: 50,
-    backgroundColor: '#673AB7',
+    backgroundColor: '#7C4DFF', // 연보라 계열로 변경
     justifyContent: 'center',
     paddingHorizontal: 15,
   },
@@ -211,7 +211,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   listContainer: {
+    flex: 1, // 화면을 꽉 채우기 위해 flex 사용
     padding: 16,
+    backgroundColor: '#EDE7F6', // 연한 보라색 배경
   },
   runningItem: {
     backgroundColor: '#fff',
@@ -230,7 +232,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   chatButton: {
-    backgroundColor: '#2196F3',
+    backgroundColor: '#9575CD', // 부드러운 보라색 버튼
     padding: 8,
     borderRadius: 5,
     flex: 1,
@@ -239,7 +241,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   manageButton: {
-    backgroundColor: '#673AB7',
+    backgroundColor: '#7E57C2', // 조금 더 진한 보라색 버튼
     padding: 8,
     borderRadius: 5,
     flex: 1,
@@ -248,19 +250,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   disabledButton: {
-    backgroundColor: '#ccc',
+    backgroundColor: '#D1C4E9', // 흐릿한 연보라 (비활성화 상태)
   },
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
   },
   loadingContainer: {
-    flex: 1,
+    flex: 1, // 화면을 꽉 채우기 위해 flex 사용
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#EDE7F6', // 연한 보라색 배경
   },
   emptyContainer: {
-    marginTop: 50,
+    flex: 1, // 빈 화면도 꽉 차도록 설정
+    justifyContent: 'center',
     alignItems: 'center',
   },
 });
