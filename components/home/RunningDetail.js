@@ -299,46 +299,83 @@ const RunningDetail = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#EDE7F6', // 연보라색 배경
+    paddingHorizontal: 10,
   },
   map: {
-    width: '100%',
+    width: '95%',
     height: 200,
+    borderRadius: 10,
+    marginTop: 15, // 위쪽 여백
+    marginHorizontal: 10, // 양옆 여백
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#7C4DFF', // 연보라 테두리
   },
   infoContainer: {
-    padding: 16,
+    padding: 15,
+    backgroundColor: '#FFFFFF', // 흰색 배경
+    borderRadius: 10,
+    marginTop: 15,
+    marginHorizontal: 10, // 양옆 여백
+    shadowColor: '#000', // 그림자 효과
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 8,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: '#333',
     marginBottom: 8,
   },
   section: {
-    padding: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#ccc',
+    padding: 15,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    marginTop: 15,
+    marginHorizontal: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 8,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#333',
     marginBottom: 8,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     padding: 16,
+    marginHorizontal: 10, // 양옆 여백
+    marginTop: 15,
   },
   button: {
-    backgroundColor: 'blue',
+    backgroundColor: '#7C4DFF', // 연보라 계열
     padding: 10,
     borderRadius: 5,
+    alignItems: 'center',
+    width: 100,
+    shadowColor: '#000', // 그림자 효과
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
   },
   disabledButton: {
-    backgroundColor: 'gray',
+    backgroundColor: '#BDBDBD', // 비활성화된 버튼 색상
     padding: 10,
     borderRadius: 5,
+    alignItems: 'center',
+    width: 100,
   },
   buttonText: {
-    color: 'white',
+    color: '#FFFFFF', // 흰색 텍스트
     fontWeight: 'bold',
   },
 });
