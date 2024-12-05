@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react'; // useRef 추가
 import {
   View,
   StyleSheet,
@@ -8,6 +8,7 @@ import {
   Text,
   Modal, // Modal 컴포넌트 추가
   Pressable, // Pressable 컴포넌트 추가 
+  Animated, // Animated 추가
 } from 'react-native';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase/firebase'; // Firestore 연결
@@ -22,6 +23,8 @@ export default function Home({ navigation, route }) {
   const [modalVisible, setModalVisible] = useState(false); // Modal 표시 여부 상태
   const [selectedDateFilters, setSelectedDateFilters] = useState([]); // 선택된 날짜 필터 배열 상태
   const [filteredRunningList, setFilteredRunningList] = useState([]); // 필터링된 러닝 리스트 상태
+  const modalY = useRef(new Animated.Value(1000)).current; // 모달 애니메이션을 위한 useRef 추가
+  const modalOpacity = useRef(new Animated.Value(0)).current;
 
   // Firestore에서 러닝 리스트 가져오는 함수
   const loadRunningList = useCallback(async () => {
@@ -62,6 +65,18 @@ export default function Home({ navigation, route }) {
   // 날짜 필터링 Modal을 표시해주는 함수
   const showDateFilterModal = () => {
     setModalVisible(true);
+    Animated.parallel([
+      Animated.timing(modalY, {
+        toValue: 0,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(modalOpacity, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start();
   };
 
   // 날짜 필터 변경 시 호출되는 함수
@@ -72,31 +87,39 @@ export default function Home({ navigation, route }) {
     setSelectedDateFilters(updatedFilters);
   };
 
-  // 확인 버튼 클릭 시 필터 적용
-  const applyDateFilters = () => {
-    setModalVisible(false); // Modal 닫기
+  // 모달 닫기 에니메이션 함수
+  const hideDateFilterModal = () => {
+    Animated.timing(modalOpacity, {
+      toValue: 0,
+      duration: 300, // fade out 시간 조절
+      useNativeDriver: true,
+    }).start(() => setModalVisible(false));
   };
 
-  // 날짜 필터링 함수
+  // 확인 버튼 클릭 시 필터 적용
+  const applyDateFilters = () => {
+    hideDateFilterModal(); // 확인 버튼을 누르면 모달을 숨김
+  };
+
+
   useEffect(() => {
     const today = new Date();
-    let filteredList = runningList; // 초기값을 runningList로 설정
+    let filteredList = runningList;
 
     const parseDate = (dateString) => {
       const [year, month, day] = dateString.split(' ')[0].split('.');
       return new Date(year, month - 1, day);
     };
+    // 선택된 필터에 따라 러닝 리스트 필터링(if 오늘 + 내일 => 오늘진행하는 러닝 + 내일진행하는 러닝 같이 필터링)
+    const filters = {
+      '오늘': (item) => isToday(parseDate(item.date)),
+      '내일': (item) => isTomorrow(parseDate(item.date)),
+      '일주일': (item) => isWithinInterval(parseDate(item.date), { start: today, end: addDays(today, 7) }),
+    };
 
-    // 선택된 필터에 따라 러닝 리스트 필터링
-    if (selectedDateFilters.includes('오늘')) {
-      filteredList = filteredList.filter(item => isToday(parseDate(item.date)));
-    }
-    if (selectedDateFilters.includes('내일')) {
-      filteredList = filteredList.filter(item => isTomorrow(parseDate(item.date)));
-    }
-    if (selectedDateFilters.includes('일주일')) {
-      filteredList = filteredList.filter(item =>
-        isWithinInterval(parseDate(item.date), { start: today, end: addDays(today, 7) })
+    if (selectedDateFilters.length > 0) {
+      filteredList = runningList.filter(item =>
+        selectedDateFilters.some(filter => filters[filter](item))
       );
     }
 
@@ -120,19 +143,15 @@ export default function Home({ navigation, route }) {
 
         {/* 날짜 필터 Modal */}
         <Modal
-          animationType="slide"
           transparent={true}
           visible={modalVisible}
-          onRequestClose={() => {
-            setModalVisible(!modalVisible);
-          }}
+          onRequestClose={hideDateFilterModal}
         >
-          {/* 모달 바깥 영역 클릭 시 모달 닫기 */}
-          <Pressable style={styles.modalOverlay} onPress={() => setModalVisible(false)}>
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
+          <View style={styles.modalOverlay}>
+            <Pressable style={styles.modalBackground} onPress={hideDateFilterModal} />
+            <Animated.View style={[styles.modalContainer, { opacity: modalOpacity }]}>
+              <Animated.View style={[styles.modalContent, { transform: [{ translateY: modalY }] }]}>
                 <Text style={styles.modalTitle}>날짜 필터를 선택하세요!</Text>
-                {/* 체크박스 */}
                 <CheckBox
                   title="오늘"
                   checked={selectedDateFilters.includes('오늘')}
@@ -151,13 +170,12 @@ export default function Home({ navigation, route }) {
                   onPress={() => handleDateFilterChange('일주일')}
                   containerStyle={styles.checkboxContainer}
                 />
-                {/* 확인 버튼 */}
                 <TouchableOpacity style={styles.confirmButton} onPress={applyDateFilters}>
                   <Text style={styles.confirmButtonText}>확인</Text>
                 </TouchableOpacity>
-              </View>
-            </View>
-          </Pressable>
+              </Animated.View>
+            </Animated.View>
+          </View>
         </Modal>
 
         {/* 러닝 리스트 출력 (필터링 적용) */}
@@ -242,41 +260,37 @@ const styles = StyleSheet.create({
   },
 
   // Modal 스타일
-  modalContainer: {
+  modalOverlay: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  }, modalBackground: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
-
-  modalContent: {
+  modalContainer: {
+    width: '80%',
     backgroundColor: '#fff',
-    padding: 20,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    borderRadius: 10,
+    overflow: 'hidden',
   },
-
+  modalContent: {
+    padding: 20,
+  },
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
   },
-
-  modalButton: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-
-  modalButtonText: {
-    fontSize: 16,
-  },
-
   checkboxContainer: {
     backgroundColor: 'transparent',
     borderWidth: 0,
     padding: 0,
   },
-
   confirmButton: {
     backgroundColor: '#7C4DFF',
     padding: 10,
@@ -284,17 +298,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
     alignItems: 'center',
   },
-
   confirmButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold',
   },
-
-  modalOverlay: { // 모달 오버레이 스타일
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-
 });
