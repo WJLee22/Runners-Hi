@@ -7,18 +7,20 @@ import {
   TouchableOpacity,
   Text,
   Modal, // Modal 컴포넌트 추가
+  Pressable, // Pressable 컴포넌트 추가 
 } from 'react-native';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase/firebase'; // Firestore 연결
 import RunningBlock from './RunningBlock';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // Vector Icons 사용
-import { isToday, isTomorrow, isWithinInterval, addDays } from 'date-fns';
+import { parse, isToday, isTomorrow, isWithinInterval, addDays } from 'date-fns';
+import { CheckBox } from '@rneui/themed'; // CheckBox 컴포넌트 추가
 
 export default function Home({ navigation, route }) {
   const [runningList, setRunningList] = useState([]);
   const [refreshing, setRefreshing] = useState(false); // 새로고침 상태
   const [modalVisible, setModalVisible] = useState(false); // Modal 표시 여부 상태
-  const [selectedDateFilter, setSelectedDateFilter] = useState(null); // 선택된 날짜 필터 상태
+  const [selectedDateFilters, setSelectedDateFilters] = useState([]); // 선택된 날짜 필터 배열 상태
   const [filteredRunningList, setFilteredRunningList] = useState([]); // 필터링된 러닝 리스트 상태
 
   // Firestore에서 러닝 리스트 가져오는 함수
@@ -62,36 +64,44 @@ export default function Home({ navigation, route }) {
     setModalVisible(true);
   };
 
-  // 날짜 필터링 버튼 클릭시 함수
+  // 날짜 필터 변경 시 호출되는 함수
   const handleDateFilterChange = (filter) => {
-    setSelectedDateFilter(filter);
-    setModalVisible(false); // Modal 닫아줌
+    const updatedFilters = selectedDateFilters.includes(filter)
+      ? selectedDateFilters.filter((f) => f !== filter) // 이미 선택된 필터는 제거
+      : [...selectedDateFilters, filter]; // 선택되지 않은 필터는 추가
+    setSelectedDateFilters(updatedFilters);
+  };
+
+  // 확인 버튼 클릭 시 필터 적용
+  const applyDateFilters = () => {
+    setModalVisible(false); // Modal 닫기
   };
 
   // 날짜 필터링 함수
   useEffect(() => {
     const today = new Date();
-    let filteredList = [];
+    let filteredList = runningList; // 초기값을 runningList로 설정
 
-    const filterDate = (dateString) => {
+    const parseDate = (dateString) => {
       const [year, month, day] = dateString.split(' ')[0].split('.');
       return new Date(year, month - 1, day);
     };
 
-    if (selectedDateFilter === '오늘') {
-      filteredList = runningList.filter(item => isToday(filterDate(item.date)));
-    } else if (selectedDateFilter === '내일') {
-      filteredList = runningList.filter(item => isTomorrow(filterDate(item.date)));
-    } else if (selectedDateFilter === '일주일') {
-      filteredList = runningList.filter(item =>
-        isWithinInterval(filterDate(item.date), { start: today, end: addDays(today, 7) }) // 7일간의 범위
+    // 선택된 필터에 따라 러닝 리스트 필터링
+    if (selectedDateFilters.includes('오늘')) {
+      filteredList = filteredList.filter(item => isToday(parseDate(item.date)));
+    }
+    if (selectedDateFilters.includes('내일')) {
+      filteredList = filteredList.filter(item => isTomorrow(parseDate(item.date)));
+    }
+    if (selectedDateFilters.includes('일주일')) {
+      filteredList = filteredList.filter(item =>
+        isWithinInterval(parseDate(item.date), { start: today, end: addDays(today, 7) })
       );
-    } else {
-      filteredList = runningList;
     }
 
     setFilteredRunningList(filteredList);
-  }, [selectedDateFilter, runningList]);
+  }, [selectedDateFilters, runningList]);
 
   return (
     <View style={styles.container}>
@@ -103,7 +113,7 @@ export default function Home({ navigation, route }) {
         {/* 날짜 필터 버튼 */}
         <TouchableOpacity style={styles.dateFilterButton} onPress={showDateFilterModal}>
           <Text style={styles.dateFilterButtonText}>
-            {selectedDateFilter ? selectedDateFilter : '날짜'}
+            {selectedDateFilters.length > 0 ? selectedDateFilters.join(', ') : '날짜'}
           </Text>
           <Icon name="chevron-down" size={20} color="#333" />
         </TouchableOpacity>
@@ -117,23 +127,37 @@ export default function Home({ navigation, route }) {
             setModalVisible(!modalVisible);
           }}
         >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>날짜</Text>
-              <TouchableOpacity style={styles.modalButton} onPress={() => handleDateFilterChange('오늘')}>
-                <Text style={styles.modalButtonText}>오늘</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.modalButton} onPress={() => handleDateFilterChange('내일')}>
-                <Text style={styles.modalButtonText}>내일</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.modalButton} onPress={() => handleDateFilterChange('일주일')}>
-                <Text style={styles.modalButtonText}>일주일</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.modalButton} onPress={() => handleDateFilterChange(null)}>
-                <Text style={styles.modalButtonText}>전체</Text>
-              </TouchableOpacity>
+          {/* 모달 바깥 영역 클릭 시 모달 닫기 */}
+          <Pressable style={styles.modalOverlay} onPress={() => setModalVisible(false)}>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>날짜 필터를 선택하세요!</Text>
+                {/* 체크박스 */}
+                <CheckBox
+                  title="오늘"
+                  checked={selectedDateFilters.includes('오늘')}
+                  onPress={() => handleDateFilterChange('오늘')}
+                  containerStyle={styles.checkboxContainer}
+                />
+                <CheckBox
+                  title="내일"
+                  checked={selectedDateFilters.includes('내일')}
+                  onPress={() => handleDateFilterChange('내일')}
+                  containerStyle={styles.checkboxContainer}
+                />
+                <CheckBox
+                  title="일주일"
+                  checked={selectedDateFilters.includes('일주일')}
+                  onPress={() => handleDateFilterChange('일주일')}
+                  containerStyle={styles.checkboxContainer}
+                />
+                {/* 확인 버튼 */}
+                <TouchableOpacity style={styles.confirmButton} onPress={applyDateFilters}>
+                  <Text style={styles.confirmButtonText}>확인</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
+          </Pressable>
         </Modal>
 
         {/* 러닝 리스트 출력 (필터링 적용) */}
@@ -200,6 +224,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
   },
+
   // 날짜 필터 버튼 스타일
   dateFilterButton: {
     flexDirection: 'row',
@@ -222,23 +247,54 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
+
   modalContent: {
     backgroundColor: '#fff',
     padding: 20,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },
+
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
   },
+
   modalButton: {
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
+
   modalButtonText: {
     fontSize: 16,
   },
+
+  checkboxContainer: {
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    padding: 0,
+  },
+
+  confirmButton: {
+    backgroundColor: '#7C4DFF',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+    alignItems: 'center',
+  },
+
+  confirmButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+
+  modalOverlay: { // 모달 오버레이 스타일
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+
 });
