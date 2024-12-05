@@ -230,15 +230,9 @@ export default function CreateRunning({ navigation }) {
         placeholder="러닝 최대인원을 입력하세요"
       />
 
-      <Text>러닝 참여 관리</Text>
-      <Switch
-        value={isParticipationAccept}
-        onValueChange={() => setIsParticipationAccept(!isParticipationAccept)}
-      />
-
       <Text>내용을 입력하세요</Text>
       <TextInput
-        style={styles.input}
+        style={styles.longinput}
         value={content}
         onChangeText={setContent}
         multiline
@@ -247,7 +241,12 @@ export default function CreateRunning({ navigation }) {
         returnKeyType="done"
       />
 
-      <Button title="완료" onPress={createRunningHandler} />
+      <TouchableOpacity
+        style={styles.submitButton}
+        onPress={createRunningHandler}
+      >
+        <Text style={styles.submitButtonText}>완료</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -255,7 +254,59 @@ export default function CreateRunning({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#E6D9FF', // 연보라색 배경
     padding: 16,
+    paddingBottom: 80,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    color: '#5C3D8D', // 보라색 텍스트
+  },
+  input: {
+    height: 40,
+    borderColor: '#D1B3FF', // 라이트 보라색
+    borderWidth: 1,
+    marginBottom: 12,
+    paddingHorizontal: 8,
+    backgroundColor: 'white',
+    borderRadius: 8,
+  },
+  longinput: {
+    height: 120,
+    borderColor: '#D1B3FF', // 라이트 보라색
+    borderWidth: 1,
+    marginBottom: 12,
+    paddingHorizontal: 8,
+    backgroundColor: 'white',
+    borderRadius: 8,
+  },
+  textArea: {
+    height: 120,
+  },
+  button: {
+    backgroundColor: '#9B4DFF', // 보라색
+    paddingVertical: 10,
+    borderRadius: 8,
+    marginBottom: 10,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  submitButton: {
+    backgroundColor: '#7A42F4', // 다크 보라색
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  submitButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   modal: {
     position: 'absolute',
@@ -268,13 +319,18 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    zIndex: 10,
+    zIndex: 10, // 기존 화면 위로 렌더링
   },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 12,
-    paddingHorizontal: 8,
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
   },
 });

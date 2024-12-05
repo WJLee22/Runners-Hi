@@ -225,7 +225,7 @@ export default function ProfileEdit({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#E6D9FF', // 연보라색 배경
     padding: 16,
   },
   header: {
