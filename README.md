@@ -50,6 +50,6 @@ npm install
 ```
 
 ## 📌 프로젝트 실행
-bash
-코드 복사
+```bash
 npx expo start
+```
