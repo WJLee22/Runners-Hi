@@ -45,9 +45,12 @@ Runnerrs-Hi
 
   </details>
     <details>
-    <summary>로그인/회원가입</summary>
-    <img src="https://github.com/user-attachments/assets/442acb3c-ee48-493b-8f7b-e82f6c0daf08" alt="로그인화면" width="30%">
-    <img src="https://github.com/user-attachments/assets/d7aa64bc-a30e-4eca-b584-5a00a4010bc6" alt="회원가입" width="30%">
+    <summary>마이페이지/러닝 통계</summary>
+    <img src="https://github.com/user-attachments/assets/64649e97-7b17-4b94-8ad1-05e4bd6c214b" alt="마이페이지" width="30%">
+    *프로필 수정*
+    <img src="https://github.com/user-attachments/assets/52afc8f9-f114-491d-9fd1-99ea13a1f821" alt="프로필 수정" width="30%">
+     *개인별 런닝 통계*
+    <img src="https://github.com/user-attachments/assets/d8b8c608-3843-41ed-a2a8-1394f0bb717b" alt="통계" width="30%">
 
   </details>
 
@@ -55,9 +58,9 @@ Runnerrs-Hi
 ---
 
 ## 🛠️ 설치
-
+```
 npm install
-
+```
 ## 📌 프로젝트실행
 
 ```
