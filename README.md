@@ -11,7 +11,7 @@
 
 ## 📺 **앱 소개 및 시연 영상**
 ```bash
-[](<a hrefhttps://youtu.be/RuRGO8FAYdw)
+[](https://youtu.be/RuRGO8FAYdw)
 ```
 
 ## 📄 **개발 구조**
