@@ -29,8 +29,8 @@ Runnerrs-Hi
 
   <details>
     <summary>로그인/회원정보</summary>
-    <img src="https://github.com/user-attachments/assets/442acb3c-ee48-493b-8f7b-e82f6c0daf08" alt="로그인화면" width="80%">
-    <img src="https://github.com/user-attachments/assets/d7aa64bc-a30e-4eca-b584-5a00a4010bc6" alt="회원가입" width="80%">
+    <img src="https://github.com/user-attachments/assets/442acb3c-ee48-493b-8f7b-e82f6c0daf08" alt="로그인화면" width="40%">
+    <img src="https://github.com/user-attachments/assets/d7aa64bc-a30e-4eca-b584-5a00a4010bc6" alt="회원가입" width="40%">
 
   </details>
   <details>
