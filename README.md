@@ -5,6 +5,16 @@
 **Runners-Hi**는 사용자가 러닝 활동을 계획, 관리, 그리고 참여할 수 있도록 돕는 앱입니다.  
 🔥 주요 기능들을 통해 러닝을 더 즐겁고 편리하게 경험해 보세요!
 
+
+---
+
+
+## 📖 **개발 구조**
+
+<div align="center">
+<img src="https://github.com/user-attachments/assets/4fd5cd9e-aeb1-4d62-9498-30da4fcc66a4">
+</div>
+
 ---
 
 ## 📖 **페이지 구성**
