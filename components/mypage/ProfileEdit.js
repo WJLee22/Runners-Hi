@@ -21,7 +21,7 @@ export default function ProfileEdit({ navigation, route }) {
   const { profile, setProfile } = route.params;
 
   // 상태 관리
-  const [nickname, setNickname] = useState(profile.nickname || '');
+  const [name, setName] = useState(profile.nickname || '');
   const [statusMessage, setStatusMessage] = useState(
     profile.statusMessage || ''
   );
@@ -68,7 +68,7 @@ export default function ProfileEdit({ navigation, route }) {
   // 저장 버튼 동작
   const handleSave = async () => {
     const updatedProfile = {
-      nickname,
+      name,
       statusMessage,
       gender,
       birthYear,
@@ -108,8 +108,7 @@ export default function ProfileEdit({ navigation, route }) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* 헤더 */}
-      <View style={styles.header}>
-      </View>
+      <View style={styles.header}></View>
 
       {/* 프로필 섹션 */}
       <View style={styles.profileSection}>
@@ -119,8 +118,8 @@ export default function ProfileEdit({ navigation, route }) {
             style={styles.profileImage}
           />
         </View>
-         {/* 성별 변경 */}
-         <TouchableOpacity onPress={() => setGenderModalVisible(true)}>
+        {/* 성별 변경 */}
+        <TouchableOpacity onPress={() => setGenderModalVisible(true)}>
           <Text style={styles.genderText}>{gender}</Text>
         </TouchableOpacity>
 
@@ -130,8 +129,8 @@ export default function ProfileEdit({ navigation, route }) {
         </TouchableOpacity>
       </View>
 
-            {/* 성별 모달 */}
-            <Modal isVisible={isGenderModalVisible}>
+      {/* 성별 모달 */}
+      <Modal isVisible={isGenderModalVisible}>
         <View style={styles.modalContent}>
           {genderOptions.map((option) => (
             <TouchableOpacity
@@ -179,8 +178,8 @@ export default function ProfileEdit({ navigation, route }) {
         <TextInput
           style={styles.input}
           placeholder="닉네임 입력"
-          value={nickname}
-          onChangeText={setNickname}
+          value={name}
+          onChangeText={setName}
         />
       </View>
 
