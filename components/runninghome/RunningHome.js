@@ -40,19 +40,17 @@ function RecruitingScreen({ navigation }) {
       const userId = auth.currentUser?.uid;
       setCurrentUserId(userId);
 
-	// Firebase에서 러닝 데이터 가져오기
-	const fetchRunnings = useCallback(async () => {
-		setLoading(true);
-		try {
-			const auth = getAuth();
-			const userId = auth.currentUser?.uid;
-			setCurrentUserId(userId);
+      if (!userId) return;
 
-			if (!userId) return;
+      // 사용자 문서 가져오기
+      const userDocRef = doc(db, 'users', userId);
+      const userDoc = await getDoc(userDocRef);
 
-			// 사용자 문서 가져오기
-			const userDocRef = doc(db, 'users', userId);
-			const userDoc = await getDoc(userDocRef);
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        const createdRunnings = userData.createdRunnings || [];
+        const joinedRunning = userData.joinedRunning || [];
+
         const allRunningIds = [
           ...new Set([...createdRunnings, ...joinedRunning]),
         ];
@@ -67,33 +65,17 @@ function RecruitingScreen({ navigation }) {
         const batchSize = 10;
         const runningsData = [];
 
-					const runningsQuery = query(
-						runningsCollection,
-						where('__name__', 'in', batchIds)
-					);
-					const runningsSnapshot = await getDocs(runningsQuery);
+        for (let i = 0; i < allRunningIds.length; i += batchSize) {
+          const batchIds = allRunningIds.slice(i, i + batchSize);
 
-					runningsSnapshot.forEach((doc) => {
-						const data = doc.data();
-						const isCreator = data.creatorId === userId;
-						if (!data.isCompleted) {
-							runningsData.push({
-								id: doc.id,
-								...data,
-								isCreator,
-							});
-						}
-					});
-				}
+          if (batchIds.length === 0) continue;
 
-				setRunnings(runningsData);
-			}
-		} catch (error) {
-			console.error('러닝 정보 가져오기 오류:', error);
-		} finally {
-			setLoading(false);
-		}
-	}, []);
+          const runningsQuery = query(
+            runningsCollection,
+            where('__name__', 'in', batchIds)
+          );
+          const runningsSnapshot = await getDocs(runningsQuery);
+
           runningsSnapshot.forEach((doc) => {
             const data = doc.data();
             const isCreator = data.creatorId === userId;
@@ -242,64 +224,65 @@ function RecruitingScreen({ navigation }) {
       </View>
     </View>
   );
-	if (loading) {
-		return (
-			<View style={styles.loadingContainer}>
-				<ActivityIndicator size="large" color="#673AB7" />
-			</View>
-		);
-	}
 
-	return (
-		<FlatList
-			data={runnings}
-			keyExtractor={(item) => item.id}
-			renderItem={renderItem}
-			contentContainerStyle={styles.listContainer}
-			ListEmptyComponent={
-				<View style={styles.emptyContainer}>
-					<Text>참여 중인 러닝이 없습니다.</Text>
-				</View>
-			}
-		/>
-	);
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#673AB7" />
+      </View>
+    );
+  }
+
+  return (
+    <FlatList
+      data={runnings}
+      keyExtractor={(item) => item.id}
+      renderItem={renderItem}
+      contentContainerStyle={styles.listContainer}
+      ListEmptyComponent={
+        <View style={styles.emptyContainer}>
+          <Text>참여 중인 러닝이 없습니다.</Text>
+        </View>
+      }
+    />
+  );
 }
 
 const Stack = createStackNavigator();
 
 export default function RunningHome() {
-	return (
-		<Stack.Navigator
-			screenOptions={{
-				headerStyle: styles.header,
-				headerTintColor: '#fff',
-				headerTitleStyle: styles.headerTitle,
-				headerTitleAlign: 'center',
-			}}
-		>
-			<Stack.Screen
-				name="Recruiting"
-				component={RecruitingScreen}
-				options={{
-					title: '참여 중인 러닝',
-				}}
-			/>
-			<Stack.Screen
-				name="Participants"
-				component={ParticipantListScreen}
-				options={{
-					title: '참가자 관리',
-				}}
-			/>
-			<Stack.Screen
-				name="Chat"
-				component={ChatScreen}
-				options={{
-					title: '채팅방',
-				}}
-			/>
-		</Stack.Navigator>
-	);
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: styles.header,
+        headerTintColor: '#fff',
+        headerTitleStyle: styles.headerTitle,
+        headerTitleAlign: 'center',
+      }}
+    >
+      <Stack.Screen
+        name="Recruiting"
+        component={RecruitingScreen}
+        options={{
+          title: '참여 중인 러닝',
+        }}
+      />
+      <Stack.Screen
+        name="Participants"
+        component={ParticipantListScreen}
+        options={{
+          title: '참가자 관리',
+        }}
+      />
+      <Stack.Screen
+        name="Chat"
+        component={ChatScreen}
+        options={{
+          title: '채팅방',
+        }}
+      />
+    </Stack.Navigator>
+  );
 }
 
 const styles = StyleSheet.create({
