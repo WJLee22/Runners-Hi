@@ -10,6 +10,7 @@ import {
   Pressable, // Pressable 컴포넌트 추가 
   Animated,
   Image // Animated 추가
+  , Alert
 } from 'react-native';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase/firebase'; // Firestore 연결
@@ -19,6 +20,7 @@ import { parse, isToday, isTomorrow, isWithinInterval, addDays } from 'date-fns'
 import { CheckBox } from '@rneui/themed'; // CheckBox 컴포넌트 추가
 
 import * as Location from 'expo-location'; //현재 위치 계산을 위해 추가
+import Toast from 'react-native-toast-message'; // Toast 추가
 
 export default function Home({ navigation, route }) {
   const [runningList, setRunningList] = useState([]);
@@ -164,6 +166,12 @@ export default function Home({ navigation, route }) {
     });
 
     setFilteredRunningList(sortedList);
+    Toast.show({
+      type: 'success',
+      text1: '현위치 기준 가까운 러닝방으로 정렬되었습니다!',
+      autoHide: true,
+      visibilityTime: 1000, // 1초 후에 사라짐
+    });
   };
 
 
@@ -247,6 +255,7 @@ export default function Home({ navigation, route }) {
       <TouchableOpacity style={styles.addButton} onPress={handleAddRunning}>
         <Icon name="plus" size={30} color="#fff" />
       </TouchableOpacity>
+      <Toast /> {/* Toast 컴포넌트 추가 */}
     </View>
   );
 }
