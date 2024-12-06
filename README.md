@@ -20,57 +20,35 @@ Runnerrs-Hi
 --- -->
 
 ## 💻 페이지구성
-
   <details>
-    <summary> 메인화면</summary>
-    <img src="https://github.com/user-attachments/assets/59dd073d-efff-4107-8d3b-41ba93599187" alt="메인" width="80%">
+    <summary>로그인/회원가입</summary>
+    <img src="https://github.com/user-attachments/assets/442acb3c-ee48-493b-8f7b-e82f6c0daf08" alt="로그인화면" width="30%">
+    <img src="https://github.com/user-attachments/assets/d7aa64bc-a30e-4eca-b584-5a00a4010bc6" alt="회원가입" width="30%">
+
+  </details>
+  <details>
+    <summary>홈화면</summary>
+    <img src="https://github.com/user-attachments/assets/469d7adb-420e-4b72-8468-ab2be75f591a" alt="홈화면" width="30%">
+    <img src="https://github.com/user-attachments/assets/bd488709-8d53-4a89-9525-6f30f3581c73" alt="러닝 방 정보" width="30%">
+    <summary>새로운 러닝 생성</summary>
+    <img src="https://github.com/user-attachments/assets/8c5bc2c9-aed1-4c2f-a2df-81a40e8b0f3b" alt="방 생성 화면" width="30%">
+    <img src="https://github.com/user-attachments/assets/082de262-a491-4288-aebe-109107bc0743" alt="시작 위치 검색" width="30%">
+    <img src="https://github.com/user-attachments/assets/b820c2d8-8575-4657-98cb-d16da24a9c72" alt="경로 설정" width="30%">
    
   </details>
-
-  <details>
-    <summary>로그인/회원정보</summary>
-    <img src="https://github.com/user-attachments/assets/442acb3c-ee48-493b-8f7b-e82f6c0daf08" alt="로그인화면" width="40%">
-    <img src="https://github.com/user-attachments/assets/d7aa64bc-a30e-4eca-b584-5a00a4010bc6" alt="회원가입" width="40%">
-
-  </details>
-  <details>
-    <summary>개발자 유형찾기</summary>
-    <img src="https://github.com/user-attachments/assets/0867ef13-d096-46b6-a9cf-fd06fb3941a6" alt="유형테스트1" width="80%">
-<img src="https://github.com/user-attachments/assets/830d2d3a-2ea1-4fe3-8dc3-ba3d991f3b80" alt="유형테스트2" width="80%">
-<img src="https://github.com/user-attachments/assets/9b8057aa-1423-409b-b8b2-26fc5d0d26f5" alt="유형테스트3" width="80%">
-    
-  </details>
-  
-  <details>
-    <summary>타이핑 캘린지</summary>
-    <img src="https://github.com/user-attachments/assets/3a3822e0-4b6f-45a7-be04-f6edce0ef8d2" alt="타이핑챌린지" width="80%">
-    
-  </details>
-  <details>
-    <summary>오류찾기 챌린지</summary>
-    <img src="https://github.com/user-attachments/assets/d728a84a-c9ce-481e-9927-b9e8b22a991d" alt="오류찾기챌린지" width="80%">
+    <details>
+    <summary>로그인/회원가입</summary>
+    <img src="https://github.com/user-attachments/assets/442acb3c-ee48-493b-8f7b-e82f6c0daf08" alt="로그인화면" width="30%">
+    <img src="https://github.com/user-attachments/assets/d7aa64bc-a30e-4eca-b584-5a00a4010bc6" alt="회원가입" width="30%">
 
   </details>
-  <details>
-    <summary>랭킹</summary>
-     
-  <img src="https://github.com/user-attachments/assets/55adc89d-c5f3-4d80-ba7c-ddbad5bde661" alt="랭킹" width="80%">
+    <details>
+    <summary>로그인/회원가입</summary>
+    <img src="https://github.com/user-attachments/assets/442acb3c-ee48-493b-8f7b-e82f6c0daf08" alt="로그인화면" width="30%">
+    <img src="https://github.com/user-attachments/assets/d7aa64bc-a30e-4eca-b584-5a00a4010bc6" alt="회원가입" width="30%">
 
   </details>
-  <details>
-    <summary>자유/팀원모집게시판</summary>
- <img src="https://github.com/user-attachments/assets/a2fa1154-7f71-4998-93ea-ccd9d8bf9d05" alt="글쓰기" width="80%">
-  <img src="https://github.com/user-attachments/assets/47b7cd6b-6333-423e-b7c6-148790c62bd7" alt="팀원모집" width="80%">  
-      
-  <img src="https://github.com/user-attachments/assets/3767bf02-070b-4438-9325-f9b1e739eb12" alt="게시판" width="80%">
-  <img src="https://github.com/user-attachments/assets/1bbfe784-1b4f-47aa-a9b2-ec3a7ae36002" alt="글보기" width="80%">
 
-  </details>
-   <details>
-    <summary>홍보 게시판</summary>
-    <img src="https://github.com/user-attachments/assets/4fe956fb-e868-40b4-ad40-0d748baf5cf1" alt="홍보게시판" width="80%">
-
-  </details>
 
 ---
 
