@@ -133,15 +133,12 @@ export default function MyPage({ navigation }) {
 
       {/* 프로필 섹션 */}
       <View style={styles.profileSection}>
-        <TouchableOpacity
+        <TouchableOpacity style={styles.profileCircle}
           onPress={() =>
             navigation.navigate('ProfileEdit', { profile, setProfile })
           }
         >
-          <Image
-            source={{ uri: 'https://via.placeholder.com/100' }}
-            style={styles.profileImage}
-          />
+        <Text style={styles.profileEditText}>프로필 수정</Text>
         </TouchableOpacity>
         <Text style={styles.profileName}>{profile.nickname}</Text>
         <Text style={styles.profileStatus}>{profile.statusMessage}</Text>
@@ -152,15 +149,15 @@ export default function MyPage({ navigation }) {
         <Text style={styles.runTitle}>My Run</Text>
         <View style={styles.runStats}>
           <View style={styles.stat}>
-            <Text style={styles.statValue}>0.00km</Text>
+            <Text style={styles.statValue}>50.00km</Text>
             <Text style={styles.statLabel}>거리</Text>
           </View>
           <View style={styles.stat}>
-            <Text style={styles.statValue}>00h 00m</Text>
+            <Text style={styles.statValue}>00h 26m</Text>
             <Text style={styles.statLabel}>시간</Text>
           </View>
           <View style={styles.stat}>
-            <Text style={styles.statValue}>0회</Text>
+            <Text style={styles.statValue}>15회</Text>
             <Text style={styles.statLabel}>횟수</Text>
           </View>
         </View>
@@ -237,7 +234,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: '#EDE7F6', // 연한 보라색 배경
     padding: 16,
-    paddingTop: 100,
+    paddingTop: 30,
   },
   header: {
     alignItems: 'center',
@@ -251,12 +248,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 24,
   },
-  profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 8,
-  },
+  profileCircle: {
+		width: 100,
+		height: 100,
+		borderRadius: 50,
+		backgroundColor: '#e0e0e0',
+		justifyContent: 'center',
+		alignItems: 'center',
+		marginBottom: 8,
+	},
+  profileEditText: {
+		fontSize: 16,
+		color: '#6200ea',
+		fontWeight: 'bold',
+	},
   profileName: {
     fontSize: 20,
     fontWeight: 'bold',
