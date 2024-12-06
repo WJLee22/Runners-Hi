@@ -254,7 +254,7 @@ export default function CreateRunning({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E6D9FF', // 연보라색 배경
+    backgroundColor: '#EDE7F6', // 연보라색 배경
     padding: 16,
     paddingBottom: 80,
   },
