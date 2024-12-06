@@ -106,6 +106,32 @@ function RecruitingScreen({ navigation }) {
       fetchRunnings();
     }, [fetchRunnings])
   );
+  //완료 핸들러
+  const handleFinish = async () => {
+    Alert.alert('런닝이 끝났나요?', '', [
+      {
+        text: '아니요',
+        onPress: () => {},
+        style: 'cancel',
+      },
+      {
+        text: '네',
+        onPress: async () => {
+          try {
+            // 러닝 방 완료
+            const docRef = doc(db, 'runnings', item.id);
+            await deleteDoc(docRef);
+
+            Alert.alert('런닝 완료', '런닝이 성공적으로 끝났습니다!');
+            navigation.goBack(); // 이전 화면으로 이동
+          } catch (error) {
+            console.error('delete failed:', error);
+            Alert.alert('오류', '런닝 완료 처리 도중 오류가 발생했습니다.');
+          }
+        },
+      },
+    ]);
+  };
 
   const renderItem = ({ item }) => (
     <View style={styles.runningItem}>
