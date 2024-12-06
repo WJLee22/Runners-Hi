@@ -18,6 +18,8 @@
 <div align="center">
 <img src="https://github.com/user-attachments/assets/4fd5cd9e-aeb1-4d62-9498-30da4fcc66a4">
 
+---
+
 ## 📖 **페이지 구성**
 
 ### 🔑 **로그인 / 회원가입**
