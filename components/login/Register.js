@@ -78,6 +78,10 @@ const Register = ({ navigation }) => {
         secureTextEntry
       />
       <Button title="회원가입" onPress={handleRegister} />
+      <Text>
+        <View style={{ height: 10 }} /> {/* 10px 간격 */}
+      </Text>
+
       <Button
         title="이미 계정이 있으신가요? 로그인"
         onPress={() => navigation.navigate('Login')}
