@@ -13,7 +13,10 @@
 [앱 소개 및 시연 영상 보기](https://youtu.be/RuRGO8FAYdw)
 ---
 
-<br>
+## 📄 **개발 구조**
+
+<div align="center">
+<img src="https://github.com/user-attachments/assets/4fd5cd9e-aeb1-4d62-9498-30da4fcc66a4">
 
 ## 📖 **페이지 구성**
 
