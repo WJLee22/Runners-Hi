@@ -150,7 +150,7 @@ export default function CourseChoice(props) {
 					text: '삭제',
 					onPress: () => {
 						// 선택한 마커 이후의 마커를 삭제하고 거리 갱신
-						const newMarkers = markers.slice(0, index + 1);
+						const newMarkers = markers.slice(0, index);
 						let newTotalDistance = 0;
 
 						// 첫 마커와 이후 마커 간의 거리 다시 계산
