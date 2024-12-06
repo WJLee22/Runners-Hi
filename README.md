@@ -9,14 +9,8 @@
 
 ---
 
-📺 앱 소개 및 시연 영상
-앱 소개 및 시연 영상 보기
-## 📄 **개발 구조**
-
-<div align="center">
-<img src="https://github.com/user-attachments/assets/4fd5cd9e-aeb1-4d62-9498-30da4fcc66a4">
-</div>
-
+## 📺 앱 소개 및 시연 영상  
+[![앱 소개 및 시연 영상](https://img.youtube.com/vi/RuRGO8FAYdw/0.jpg)](https://youtu.be/RuRGO8FAYdw)
 ---
 
 <br>
