@@ -20,6 +20,9 @@ import {
   query,
   where,
   deleteDoc,
+  updateDoc,
+  setDoc,
+  increment,
 } from 'firebase/firestore';
 import ParticipantListScreen from './ParticipantListScreen';
 import ChatScreen from './ChatScreen';
@@ -94,13 +97,11 @@ function RecruitingScreen({ navigation }) {
       setLoading(false);
     }
   }, []);
-
-  // 러닝 완료(삭제) 처리
   const handleComplete = async (runningId) => {
     try {
       Alert.alert(
-        '런닝이 끝났나요?', // 제목
-        '이 런닝을 완료하고 삭제하시겠습니까?', // 메시지 추가
+        '런닝이 끝났나요?',
+        '이 런닝을 완료하고 삭제하시겠습니까?',
         [
           {
             text: '아니요',
@@ -110,8 +111,48 @@ function RecruitingScreen({ navigation }) {
             text: '네',
             onPress: async () => {
               try {
-                // Firestore에서 문서 삭제
                 const runningRef = doc(db, 'runnings', runningId);
+                const runningSnap = await getDoc(runningRef);
+
+                if (!runningSnap.exists()) {
+                  Alert.alert('오류', '런닝 정보를 찾을 수 없습니다.');
+                  return;
+                }
+
+                const runData = runningSnap.data();
+                const creatorId = runData.creatorId;
+                const participants = runData.participants || [];
+                const courseStr = runData.course || '0km';
+                const courseNum = parseFloat(
+                  courseStr.replace('km', '').trim()
+                ); // "3.14km" -> "3.14" -> parseFloat("3.14") -> 3.14
+
+                const date = runData.date || ''; // 날짜 정보
+
+                // 러닝에 참여한 모든 유저(방 생성자 + 참가자)
+                const allUserIds = [creatorId, ...participants];
+
+                // 모든 유저 정보 업데이트
+                for (const userId of allUserIds) {
+                  // participationCount +1 증가, totalDistance에 course 더하기
+                  const userRef = doc(db, 'users', userId);
+                  await updateDoc(userRef, {
+                    participationCount: increment(1),
+                    totalDistance: increment(courseNum),
+                  });
+
+                  // 해당 유저의 participationHistory 컬렉션에 기록 추가
+                  const historyRef = doc(
+                    collection(db, 'users', userId, 'participationHistory')
+                  );
+                  await setDoc(
+                    historyRef,
+                    { date, courseNum },
+                    { merge: true }
+                  );
+                }
+
+                // 러닝 문서 삭제
                 await deleteDoc(runningRef);
 
                 // UI 업데이트: 삭제된 러닝을 목록에서 제거
@@ -133,7 +174,6 @@ function RecruitingScreen({ navigation }) {
       console.error('러닝 처리 중 오류:', error);
     }
   };
-
   useFocusEffect(
     useCallback(() => {
       fetchRunnings();
