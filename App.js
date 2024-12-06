@@ -4,7 +4,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Login from './components/login/Login';
 import MainApp from './components/MainApp';
 import Register from './components/login/Register';
-import { Image } from 'react-native';
 
 const Stack = createStackNavigator();
 
