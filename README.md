@@ -37,9 +37,11 @@ Runnerrs-Hi
    
   </details>
     <details>
-    <summary>로그인/회원가입</summary>
-    <img src="https://github.com/user-attachments/assets/442acb3c-ee48-493b-8f7b-e82f6c0daf08" alt="로그인화면" width="30%">
-    <img src="https://github.com/user-attachments/assets/d7aa64bc-a30e-4eca-b584-5a00a4010bc6" alt="회원가입" width="30%">
+    <summary>러닝 방 관리</summary>
+    <img src="https://github.com/user-attachments/assets/d6ed8473-cd6b-400c-94f7-0965b333016d" alt="참여 중인 러닝 화면" width="30%">
+    <img src="https://github.com/user-attachments/assets/834e10ac-8def-4e62-9521-b5bf1f62cc72" alt="채팅 화면" width="30%">
+    <img src="https://github.com/user-attachments/assets/a29e9299-2b53-4bc6-8337-d8781350170f" alt="참여자 관리" width="30%">
+
 
   </details>
     <details>
