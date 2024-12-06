@@ -7,6 +7,7 @@ import {
 	Share,
 	TouchableOpacity,
 	ActivityIndicator,
+	ScrollView,
 } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { getAuth } from 'firebase/auth';
@@ -226,7 +227,7 @@ const RunningDetail = ({ route, navigation }) => {
 	};
 
 	return (
-		<View style={styles.container}>
+		<ScrollView style={styles.container}>
 			{isMapReady ? (
 				<MapView style={styles.map} initialRegion={initialRegion}>
 					{markers.map((marker, index) => (
@@ -311,7 +312,7 @@ const RunningDetail = ({ route, navigation }) => {
 					</TouchableOpacity>
 				)}
 			</View>
-		</View>
+		</ScrollView>
 	);
 };
 
