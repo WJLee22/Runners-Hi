@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -14,10 +14,11 @@ import { getAuth, signOut } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase'; // Firestore 연결
 import Icon from 'react-native-vector-icons/Entypo';
+import { useFocusEffect } from '@react-navigation/native'; // 추가한 부분
 
 export default function MyPage({ navigation }) {
   const [profile, setProfile] = useState({
-    name: '미율치',
+    name: '러너스하이',
     statusMessage: '안녕하세요, RunnersHi입니다!',
   });
 
@@ -25,7 +26,9 @@ export default function MyPage({ navigation }) {
   const [memo, setMemo] = useState('');
   const [memoData, setMemoData] = useState({});
   const [isModalVisible, setModalVisible] = useState(false);
-
+  const [participationCount, setParticipationCount] = useState(0);
+  const [totalDistance, setTotalDistance] = useState(0);
+  const [loading, setLoading] = useState(true);
   const STORAGE_KEY = 'MEMO_DATA';
 
   useEffect(() => {
@@ -41,9 +44,10 @@ export default function MyPage({ navigation }) {
 
         const userDocRef = doc(db, 'users', userId);
         const userDocSnap = await getDoc(userDocRef);
-
         if (userDocSnap.exists()) {
           const userData = userDocSnap.data();
+          setParticipationCount(userData.participationCount || 0);
+          setTotalDistance(userData.totalDistance || 0);
           setProfile((prevProfile) => ({
             ...prevProfile,
             name: userData.name || prevProfile.name, // name 필드 사용
@@ -83,6 +87,46 @@ export default function MyPage({ navigation }) {
     loadMemoData();
   }, []);
 
+  // 화면 포커스 시 데이터 새로고침 추가 부분
+  useFocusEffect(
+    useCallback(() => {
+      const refreshUserData = async () => {
+        try {
+          const auth = getAuth();
+          const userId = auth.currentUser?.uid;
+
+          if (!userId) {
+            console.error('로그인된 유저가 없습니다.');
+            return;
+          }
+
+          const userDocRef = doc(db, 'users', userId);
+          const userDocSnap = await getDoc(userDocRef);
+          if (userDocSnap.exists()) {
+            const userData = userDocSnap.data();
+            setParticipationCount(userData.participationCount || 0);
+            setTotalDistance(userData.totalDistance || 0);
+            setProfile((prevProfile) => ({
+              ...prevProfile,
+              name: userData.name || prevProfile.name,
+              statusMessage:
+                userData.statusMessage || prevProfile.statusMessage,
+              pace: userData.pace || prevProfile.pace,
+              places: userData.places || prevProfile.places,
+              style: userData.places || prevProfile.style,
+            }));
+          } else {
+            console.error('사용자 문서가 없습니다.');
+          }
+        } catch (error) {
+          console.error('유저 프로필 가져오기 실패:', error);
+        }
+      };
+
+      refreshUserData();
+    }, [])
+  );
+
   // 메모 저장
   const saveMemo = async () => {
     const updatedMemoData = { ...memoData, [selectedDate]: memo };
@@ -96,13 +140,12 @@ export default function MyPage({ navigation }) {
       console.error('Failed to save memo:', error);
     }
   };
+
   //로그아웃 핸들러
   const handleLogout = async () => {
     const auth = getAuth();
     try {
       await signOut(auth);
-      // 로그아웃 성공 시 처리 로직
-      // 예: 로그인 화면으로 이동
       navigation.replace('Login');
     } catch (error) {
       console.error('로그아웃 실패:', error);
@@ -128,7 +171,7 @@ export default function MyPage({ navigation }) {
     const weekDays = [];
     for (let i = 0; i < 7; i++) {
       const day = new Date(startOfWeek);
-      day.setDate(startOfWeek.getDate() + i); // 일요일부터 토요일까지 추가
+      day.setDate(startOfWeek.getDate() + i);
       weekDays.push({
         year: day.getFullYear(),
         month: day.getMonth() + 1,
@@ -168,15 +211,11 @@ export default function MyPage({ navigation }) {
         <Text style={styles.runTitle}>My Run</Text>
         <View style={styles.runStats}>
           <View style={styles.stat}>
-            <Text style={styles.statValue}>50.00km</Text>
+            <Text style={styles.statValue}> {totalDistance.toFixed(2)} km</Text>
             <Text style={styles.statLabel}>거리</Text>
           </View>
           <View style={styles.stat}>
-            <Text style={styles.statValue}>00h 26m</Text>
-            <Text style={styles.statLabel}>시간</Text>
-          </View>
-          <View style={styles.stat}>
-            <Text style={styles.statValue}>15회</Text>
+            <Text style={styles.statValue}>{participationCount}회</Text>
             <Text style={styles.statLabel}>횟수</Text>
           </View>
         </View>
@@ -195,12 +234,12 @@ export default function MyPage({ navigation }) {
                 styles.dateBox,
                 date.day === today &&
                   date.month === currentMonth &&
-                  styles.selectedDate, // 오늘 날짜 스타일
+                  styles.selectedDate,
               ]}
               onPress={() => {
                 const fullDate = `${date.year}-${date.month}-${date.day}`;
                 setSelectedDate(fullDate);
-                setMemo(memoData[fullDate] || ''); // 저장된 메모 불러오기
+                setMemo(memoData[fullDate] || '');
                 setModalVisible(true);
               }}
             >
@@ -209,7 +248,7 @@ export default function MyPage({ navigation }) {
                   styles.dateText,
                   date.day === today &&
                     date.month === currentMonth &&
-                    styles.selectedDateText, // 오늘 날짜 텍스트 스타일
+                    styles.selectedDateText,
                 ]}
               >
                 {date.day}
@@ -251,7 +290,7 @@ export default function MyPage({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#EDE7F6', // 연한 보라색 배경
+    backgroundColor: '#EDE7F6',
     padding: 16,
     paddingTop: 30,
   },
@@ -260,7 +299,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
     justifyContent: 'space-between',
-    paddingLeft: '40%', // 화면의 절반 정도 여백을 준 뒤 그 다음부터 요소 시작
+    paddingLeft: '40%',
   },
   title: {
     fontSize: 24,
