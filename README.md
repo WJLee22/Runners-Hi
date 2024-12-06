@@ -46,11 +46,11 @@ Runnerrs-Hi
   </details>
     <details>
     <summary>마이페이지/러닝 통계</summary>
-    #마이페이지
+    # 마이페이지
     <img src="https://github.com/user-attachments/assets/64649e97-7b17-4b94-8ad1-05e4bd6c214b" alt="마이페이지" width="30%">
-    #프로필 수정
+    # 프로필 수정
     <img src="https://github.com/user-attachments/assets/52afc8f9-f114-491d-9fd1-99ea13a1f821" alt="프로필 수정" width="30%">
-    #개인별 런닝 통계
+    # 개인별 런닝 통계
     <img src="https://github.com/user-attachments/assets/d8b8c608-3843-41ed-a2a8-1394f0bb717b" alt="통계" width="30%">
 
   </details>
