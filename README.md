@@ -1,4 +1,4 @@
-# DevOops
+ # DevOops
 
 ## 🔅 소개
 
@@ -29,9 +29,8 @@ Runnerrs-Hi
 
   <details>
     <summary>로그인/회원정보</summary>
-    <img src="https://github.com/user-attachments/assets/63b03fb0-5054-484b-b98b-a2e59a289a2f" alt="로그인화면" width="80%">
-    <img src="https://github.com/user-attachments/assets/7d22c4f9-5cd2-41b9-9e1b-517706f0f471" alt="마이페이지" width="80%">
-    <img src="https://github.com/user-attachments/assets/3f97f651-3267-4bb5-b045-d05071280ed6" alt="회원정보수정" width="80%">
+    <img src="https://github.com/user-attachments/assets/442acb3c-ee48-493b-8f7b-e82f6c0daf08" alt="로그인화면" width="80%">
+    <img src="https://github.com/user-attachments/assets/d7aa64bc-a30e-4eca-b584-5a00a4010bc6" alt="회원가입" width="80%">
 
   </details>
   <details>
