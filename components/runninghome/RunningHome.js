@@ -24,6 +24,7 @@ import {
   getDocs,
   query,
   where,
+  deleteDoc,
 } from 'firebase/firestore';
 
 function RecruitingScreen({ navigation }) {
@@ -123,7 +124,6 @@ function RecruitingScreen({ navigation }) {
             await deleteDoc(docRef);
 
             Alert.alert('런닝 완료', '런닝이 성공적으로 끝났습니다!');
-            navigation.goBack(); // 이전 화면으로 이동
           } catch (error) {
             console.error('delete failed:', error);
             Alert.alert('오류', '런닝 완료 처리 도중 오류가 발생했습니다.');
