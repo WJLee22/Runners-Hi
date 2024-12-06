@@ -1,5 +1,3 @@
-// RunningHome.js
-
 import React, { useState, useCallback } from 'react';
 import {
   View,
@@ -8,13 +6,10 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useFocusEffect } from '@react-navigation/native';
-// 각 화면 컴포넌트
-import ParticipantListScreen from './ParticipantListScreen';
-import ChatScreen from './ChatScreen';
-
 import { getAuth } from 'firebase/auth';
 import { db } from '../firebase/firebase';
 import {
@@ -26,12 +21,15 @@ import {
   where,
   deleteDoc,
 } from 'firebase/firestore';
+import ParticipantListScreen from './ParticipantListScreen';
+import ChatScreen from './ChatScreen';
 
 function RecruitingScreen({ navigation }) {
   const [runnings, setRunnings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState(null);
 
+  // Firebase에서 러닝 데이터 가져오기
   const fetchRunnings = useCallback(async () => {
     setLoading(true);
     try {
@@ -50,14 +48,9 @@ function RecruitingScreen({ navigation }) {
         const createdRunnings = userData.createdRunnings || [];
         const joinedRunning = userData.joinedRunning || [];
 
-        console.log('createdRunnings:', createdRunnings);
-        console.log('joinedRunning:', joinedRunning);
-
         const allRunningIds = [
           ...new Set([...createdRunnings, ...joinedRunning]),
         ];
-
-        console.log('allRunningIds:', allRunningIds);
 
         if (allRunningIds.length === 0) {
           setRunnings([]);
@@ -66,7 +59,6 @@ function RecruitingScreen({ navigation }) {
         }
 
         const runningsCollection = collection(db, 'runnings');
-
         const batchSize = 10;
         const runningsData = [];
 
@@ -84,15 +76,16 @@ function RecruitingScreen({ navigation }) {
           runningsSnapshot.forEach((doc) => {
             const data = doc.data();
             const isCreator = data.creatorId === userId;
-            runningsData.push({
-              id: doc.id,
-              ...data,
-              isCreator,
-            });
+            if (!data.isCompleted) {
+              runningsData.push({
+                id: doc.id,
+                ...data,
+                isCreator,
+              });
+            }
           });
         }
 
-        console.log('runningsData:', runningsData);
         setRunnings(runningsData);
       }
     } catch (error) {
@@ -102,44 +95,71 @@ function RecruitingScreen({ navigation }) {
     }
   }, []);
 
+  // 러닝 완료(삭제) 처리
+  const handleComplete = async (runningId) => {
+    try {
+      Alert.alert(
+        '런닝이 끝났나요?', // 제목
+        '이 런닝을 완료하고 삭제하시겠습니까?', // 메시지 추가
+        [
+          {
+            text: '아니요',
+            style: 'cancel',
+          },
+          {
+            text: '네',
+            onPress: async () => {
+              try {
+                // Firestore에서 문서 삭제
+                const runningRef = doc(db, 'runnings', runningId);
+                await deleteDoc(runningRef);
+
+                // UI 업데이트: 삭제된 러닝을 목록에서 제거
+                setRunnings((prevRunnings) =>
+                  prevRunnings.filter((running) => running.id !== runningId)
+                );
+
+                Alert.alert('런닝 완료', '런닝이 성공적으로 끝났습니다!');
+              } catch (error) {
+                console.error('러닝 삭제 처리 중 오류:', error);
+                Alert.alert('오류', '런닝 삭제 중 문제가 발생했습니다.');
+              }
+            },
+          },
+        ],
+        { cancelable: true }
+      );
+    } catch (error) {
+      console.error('러닝 처리 중 오류:', error);
+    }
+  };
+
   useFocusEffect(
     useCallback(() => {
       fetchRunnings();
     }, [fetchRunnings])
   );
-  //완료 핸들러
-  const handleFinish = async () => {
-    Alert.alert('런닝이 끝났나요?', '', [
-      {
-        text: '아니요',
-        onPress: () => {},
-        style: 'cancel',
-      },
-      {
-        text: '네',
-        onPress: async () => {
-          try {
-            // 러닝 방 완료
-            const docRef = doc(db, 'runnings', item.id);
-            await deleteDoc(docRef);
-
-            Alert.alert('런닝 완료', '런닝이 성공적으로 끝났습니다!');
-          } catch (error) {
-            console.error('delete failed:', error);
-            Alert.alert('오류', '런닝 완료 처리 도중 오류가 발생했습니다.');
-          }
-        },
-      },
-    ]);
-  };
 
   const renderItem = ({ item }) => (
     <View style={styles.runningItem}>
-      <Text style={styles.title}>{item.title}</Text>
-      <Text>
-        {item.date} {item.time}
-      </Text>
-      <Text>{item.place}</Text>
+      <View style={styles.runningHeader}>
+        <View style={styles.textContainer}>
+          <Text style={styles.title}>{item.title}</Text>
+          <Text>
+            {item.date} {item.time}
+          </Text>
+          <Text>{item.place}</Text>
+        </View>
+        {/* 완료 버튼을 오른쪽 끝으로 배치 */}
+        {item.isCreator && (
+          <TouchableOpacity
+            style={styles.completeButton}
+            onPress={() => handleComplete(item.id)}
+          >
+            <Text style={styles.completeButtonText}>종료하기</Text>
+          </TouchableOpacity>
+        )}
+      </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.chatButton}
@@ -228,7 +248,7 @@ export default function RunningHome() {
 const styles = StyleSheet.create({
   header: {
     height: 50,
-    backgroundColor: '#7C4DFF', // 연보라 계열로 변경
+    backgroundColor: '#7C4DFF',
     justifyContent: 'center',
     paddingHorizontal: 15,
   },
@@ -237,9 +257,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   listContainer: {
-    flex: 1, // 화면을 꽉 채우기 위해 flex 사용
+    flexGrow: 1,
     padding: 16,
-    backgroundColor: '#EDE7F6', // 연한 보라색 배경
+    backgroundColor: '#EDE7F6',
   },
   runningItem: {
     backgroundColor: '#fff',
@@ -248,8 +268,29 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     elevation: 2,
   },
+  runningHeader: {
+    flexDirection: 'row', // 텍스트와 버튼을 한 줄에 배치
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  textContainer: {
+    flex: 1, // 텍스트가 가변적으로 공간을 차지하도록 설정
+    marginRight: 8, // 버튼과 텍스트 사이의 간격
+  },
   title: {
     fontSize: 18,
+    fontWeight: 'bold',
+  },
+  completeButton: {
+    backgroundColor: '#1976D2', // 초록색 완료 버튼
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 4,
+  },
+  completeButtonText: {
+    color: '#fff',
+    fontSize: 14,
     fontWeight: 'bold',
   },
   buttonContainer: {
@@ -258,7 +299,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   chatButton: {
-    backgroundColor: '#9575CD', // 부드러운 보라색 버튼
+    backgroundColor: '#9575CD',
     padding: 8,
     borderRadius: 5,
     flex: 1,
@@ -267,7 +308,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   manageButton: {
-    backgroundColor: '#7E57C2', // 조금 더 진한 보라색 버튼
+    backgroundColor: '#7E57C2',
     padding: 8,
     borderRadius: 5,
     flex: 1,
@@ -276,20 +317,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   disabledButton: {
-    backgroundColor: '#D1C4E9', // 흐릿한 연보라 (비활성화 상태)
+    backgroundColor: '#D1C4E9',
   },
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
   },
   loadingContainer: {
-    flex: 1, // 화면을 꽉 채우기 위해 flex 사용
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#EDE7F6', // 연한 보라색 배경
+    backgroundColor: '#EDE7F6',
   },
   emptyContainer: {
-    flex: 1, // 빈 화면도 꽉 차도록 설정
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
