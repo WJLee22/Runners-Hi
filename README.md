@@ -61,3 +61,9 @@ npm install
 ```bash
 npx expo start
 ```
+
+<br> 
+
+## apk 드라이브 링크 
+
+https://drive.google.com/file/d/1A1_AjJqcffU9a-Y31kjyVTNGwv8IuzOu/view?usp=drive_link
