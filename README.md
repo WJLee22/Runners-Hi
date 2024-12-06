@@ -9,8 +9,12 @@
 
 ---
 
+## 📺 **앱 소개 및 시연 영상**
+```bash
+https://youtu.be/RuRGO8FAYdw
+```
 
-## 📖 **개발 구조**
+## 📄 **개발 구조**
 
 <div align="center">
 <img src="https://github.com/user-attachments/assets/4fd5cd9e-aeb1-4d62-9498-30da4fcc66a4">
