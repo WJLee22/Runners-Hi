@@ -48,6 +48,9 @@ export default function MyPage({ navigation }) {
             ...prevProfile,
             name: userData.name || prevProfile.name, // name 필드 사용
             statusMessage: userData.statusMessage || prevProfile.statusMessage,
+            pace: userData.pace || prevProfile.pace,
+            places: userData.places || prevProfile.places,
+            style: userData.places || prevProfile.style,
           }));
         } else {
           console.error('사용자 문서가 없습니다.');
