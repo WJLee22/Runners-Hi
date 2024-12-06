@@ -10,13 +10,14 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Modal from 'react-native-modal';
-import { getAuth } from 'firebase/auth';
+import { getAuth, signOut } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase'; // Firestore 연결
+import Icon from 'react-native-vector-icons/Entypo';
 
 export default function MyPage({ navigation }) {
   const [profile, setProfile] = useState({
-    nickname: '미율치',
+    name: '미율치',
     statusMessage: '안녕하세요, RunnersHi입니다!',
   });
 
@@ -45,7 +46,7 @@ export default function MyPage({ navigation }) {
           const userData = userDocSnap.data();
           setProfile((prevProfile) => ({
             ...prevProfile,
-            nickname: userData.name || prevProfile.nickname, // name 필드 사용
+            name: userData.name || prevProfile.name, // name 필드 사용
             statusMessage: userData.statusMessage || prevProfile.statusMessage,
           }));
         } else {
@@ -92,6 +93,19 @@ export default function MyPage({ navigation }) {
       console.error('Failed to save memo:', error);
     }
   };
+  //로그아웃 핸들러
+  const handleLogout = async () => {
+    const auth = getAuth();
+    try {
+      await signOut(auth);
+      // 로그아웃 성공 시 처리 로직
+      // 예: 로그인 화면으로 이동
+      navigation.replace('Login');
+    } catch (error) {
+      console.error('로그아웃 실패:', error);
+      alert('로그아웃 중 오류가 발생했습니다.');
+    }
+  };
 
   // 현재 날짜 가져오기
   const currentDate = new Date();
@@ -128,19 +142,21 @@ export default function MyPage({ navigation }) {
     <ScrollView contentContainerStyle={styles.container}>
       {/* 헤더 */}
       <View style={styles.header}>
-        <Text style={styles.title}>Runners Hi</Text>
+        <Text style={styles.title}> Runners Hi</Text>
+        <Icon onPress={handleLogout} name="log-out" size={32} />
       </View>
 
       {/* 프로필 섹션 */}
       <View style={styles.profileSection}>
-        <TouchableOpacity style={styles.profileCircle}
+        <TouchableOpacity
+          style={styles.profileCircle}
           onPress={() =>
             navigation.navigate('ProfileEdit', { profile, setProfile })
           }
         >
-        <Text style={styles.profileEditText}>프로필 수정</Text>
+          <Text style={styles.profileEditText}>프로필 수정</Text>
         </TouchableOpacity>
-        <Text style={styles.profileName}>{profile.nickname}</Text>
+        <Text style={styles.profileName}>{profile.name}</Text>
         <Text style={styles.profileStatus}>{profile.statusMessage}</Text>
       </View>
 
@@ -237,8 +253,11 @@ const styles = StyleSheet.create({
     paddingTop: 30,
   },
   header: {
+    flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 16,
+    justifyContent: 'space-between',
+    paddingLeft: '40%', // 화면의 절반 정도 여백을 준 뒤 그 다음부터 요소 시작
   },
   title: {
     fontSize: 24,
@@ -249,19 +268,19 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   profileCircle: {
-		width: 100,
-		height: 100,
-		borderRadius: 50,
-		backgroundColor: '#e0e0e0',
-		justifyContent: 'center',
-		alignItems: 'center',
-		marginBottom: 8,
-	},
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#e0e0e0',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
   profileEditText: {
-		fontSize: 16,
-		color: '#6200ea',
-		fontWeight: 'bold',
-	},
+    fontSize: 16,
+    color: '#6200ea',
+    fontWeight: 'bold',
+  },
   profileName: {
     fontSize: 20,
     fontWeight: 'bold',

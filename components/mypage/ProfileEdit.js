@@ -21,7 +21,7 @@ export default function ProfileEdit({ navigation, route }) {
   const { profile, setProfile } = route.params;
 
   // 상태 관리
-  const [name, setName] = useState(profile.nickname || '');
+  const [name, setName] = useState(profile.name || '');
   const [statusMessage, setStatusMessage] = useState(
     profile.statusMessage || ''
   );
