@@ -17,7 +17,7 @@ import Icon from 'react-native-vector-icons/Entypo';
 
 export default function MyPage({ navigation }) {
   const [profile, setProfile] = useState({
-    name: '미율치',
+    name: '러너스하이',
     statusMessage: '안녕하세요, RunnersHi입니다!',
   });
 
@@ -25,7 +25,9 @@ export default function MyPage({ navigation }) {
   const [memo, setMemo] = useState('');
   const [memoData, setMemoData] = useState({});
   const [isModalVisible, setModalVisible] = useState(false);
-
+  const [participationCount, setParticipationCount] = useState(0);
+  const [totalDistance, setTotalDistance] = useState(0);
+  const [loading, setLoading] = useState(true);
   const STORAGE_KEY = 'MEMO_DATA';
 
   useEffect(() => {
@@ -41,9 +43,10 @@ export default function MyPage({ navigation }) {
 
         const userDocRef = doc(db, 'users', userId);
         const userDocSnap = await getDoc(userDocRef);
-
         if (userDocSnap.exists()) {
           const userData = userDocSnap.data();
+          setParticipationCount(userData.participationCount || 0);
+          setTotalDistance(userData.totalDistance || 0);
           setProfile((prevProfile) => ({
             ...prevProfile,
             name: userData.name || prevProfile.name, // name 필드 사용
@@ -168,15 +171,11 @@ export default function MyPage({ navigation }) {
         <Text style={styles.runTitle}>My Run</Text>
         <View style={styles.runStats}>
           <View style={styles.stat}>
-            <Text style={styles.statValue}>50.00km</Text>
+            <Text style={styles.statValue}> {totalDistance.toFixed(2)} km</Text>
             <Text style={styles.statLabel}>거리</Text>
           </View>
           <View style={styles.stat}>
-            <Text style={styles.statValue}>00h 26m</Text>
-            <Text style={styles.statLabel}>시간</Text>
-          </View>
-          <View style={styles.stat}>
-            <Text style={styles.statValue}>15회</Text>
+            <Text style={styles.statValue}>{participationCount}회</Text>
             <Text style={styles.statLabel}>횟수</Text>
           </View>
         </View>

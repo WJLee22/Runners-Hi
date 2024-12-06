@@ -119,7 +119,9 @@ const MyRunning = () => {
       <View style={styles.statContainer}>
         <View style={styles.statItem}>
           <Text style={styles.statLabel}>총 달린 거리</Text>
-          <Text style={styles.statValue}>{profile.totalDistance} km</Text>
+          <Text style={styles.statValue}>
+            {profile.totalDistance.toFixed(2)} km
+          </Text>
         </View>
         <View style={styles.statItem}>
           <Text style={styles.statLabel}>러닝 참여 횟수</Text>
