@@ -116,7 +116,7 @@ const RunningDetail = ({ route, navigation }) => {
 	const handleShare = async () => {
 		try {
 			await Share.share({
-				message: `러닝 참여해요! ${item.title} - ${item.date} ${item.time} ${item.place}`,
+				message: `같이 러닝 하실래요? ${item.title} - ${item.date} ${item.time} ${item.place}`,
 				url: 'https://app-link.com', // 앱 링크로 변경해주자.
 			});
 		} catch (error) {
@@ -128,7 +128,7 @@ const RunningDetail = ({ route, navigation }) => {
 		Alert.alert('러닝 정보를 삭제하시겠습니까?', '', [
 			{
 				text: '취소',
-				onPress: () => {},
+				onPress: () => { },
 				style: 'cancel',
 			},
 			{
