@@ -164,7 +164,7 @@ export default function Home({ navigation, route }) {
 			(Math.cos((lat1 * Math.PI) / 180) *
 				Math.cos((lat2 * Math.PI) / 180) *
 				(1 - Math.cos(difLon))) /
-				2;
+			2;
 
 		return radius * 2 * Math.asin(Math.sqrt(a)); // 두 지점 사이의 거리 반환
 	};
@@ -191,6 +191,7 @@ export default function Home({ navigation, route }) {
 		});
 
 		setFilteredRunningList(sortedList);
+		// Toast 메시지 출력부분 <Text> 컴포넌트 에러로 인해 미사용. 추후 개선 예정 
 		Toast.show({
 			type: 'success', // 메시지의 타입 (성공 메시지)
 			text1: '현위치 기준 가까운 러닝방으로 정렬되었습니다!', // 표시될 메시지
