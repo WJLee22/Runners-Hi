@@ -19,7 +19,7 @@ import { useFocusEffect } from '@react-navigation/native'; // 추가한 부분
 export default function MyPage({ navigation }) {
 	const [profile, setProfile] = useState({
 		name: '러너스하이',
-		statusMessage: '안녕하세요, RunnersHi입니다!',
+		statusMessage: '안녕하세요, Runners-Hi입니다!',
 	});
 
 	const [selectedDate, setSelectedDate] = useState(null);
@@ -238,8 +238,8 @@ export default function MyPage({ navigation }) {
 							style={[
 								styles.dateBox,
 								date.day === today &&
-									date.month === currentMonth &&
-									styles.selectedDate,
+								date.month === currentMonth &&
+								styles.selectedDate,
 							]}
 							onPress={() => {
 								const fullDate = `${date.year}-${date.month}-${date.day}`;
@@ -252,8 +252,8 @@ export default function MyPage({ navigation }) {
 								style={[
 									styles.dateText,
 									date.day === today &&
-										date.month === currentMonth &&
-										styles.selectedDateText,
+									date.month === currentMonth &&
+									styles.selectedDateText,
 								]}
 							>
 								{date.day}

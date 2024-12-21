@@ -47,7 +47,7 @@ export default function ProfileEdit({ navigation, route }) {
     '6.0 이상 분/km',
     '잘 모름 분/km',
   ];
-  const placeOptions = ['공원', '강변', '호수', '운동장', '트랙'];
+  const placeOptions = ['공원', '한강', '호수', '운동장', '트랙'];
   const styleOptions = [
     '대화 없이 달리기',
     '대화하며 달리기',
@@ -97,11 +97,11 @@ export default function ProfileEdit({ navigation, route }) {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedProfile));
 
       setProfile(updatedProfile); // MyPage 상태 업데이트
-      alert('프로필 데이터가 저장되었습니다!');
+      alert('프로필 정보가 저장되었습니다!');
       navigation.goBack(); // 이전 화면으로 이동
     } catch (error) {
       console.error('Failed to save profile data:', error);
-      alert('프로필 데이터 저장에 실패했습니다.');
+      alert('프로필 정보 저장에 실패했습니다.');
     }
   };
 
