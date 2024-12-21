@@ -22,7 +22,7 @@
       },
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyB-z878ThYwqK5bIyaZSClYd71C9cYNy-A"
+          "apiKey": "googleMapsApiKey"
         }
       },
       "package": "com.anonymous.runnershigh"

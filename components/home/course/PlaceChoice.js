@@ -11,7 +11,7 @@ import MapView, { Marker } from 'react-native-maps';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import 'react-native-get-random-values';
 
-const GOOGLE_API_KEY = 'AIzaSyCnn_a7JTptf0ERAN8cHz2G2HS2yQfgzfk';
+const GOOGLE_API_KEY = 'google-api-key'; // 구글 API 키
 
 export default function PlaceChoice(props) {
 	const [markers, setMarkers] = useState([]); // 마커 리스트
