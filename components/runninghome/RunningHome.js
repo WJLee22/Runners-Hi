@@ -250,7 +250,7 @@ function RecruitingScreen({ navigation }) {
 						}}
 						disabled={!item.isCreator}
 					>
-						<Text style={styles.buttonText}>참가자 관리</Text>
+						<Text style={styles.buttonText}>크루 관리</Text>
 					</TouchableOpacity>
 				</View>
 			</View>
@@ -303,7 +303,7 @@ export default function RunningHome() {
 				name="Participants"
 				component={ParticipantListScreen}
 				options={{
-					title: '참가자 관리',
+					title: '크루 관리',
 				}}
 			/>
 			<Stack.Screen

@@ -71,8 +71,8 @@ export default function ParticipantListScreen({ route, navigation }) {
           navigation.goBack();
         }
       } catch (error) {
-        console.error('참가자 정보 가져오기 오류:', error);
-        Alert.alert('오류', '참가자 정보를 가져오는 중 오류가 발생했습니다.');
+        console.error('크루 정보 가져오기 오류:', error);
+        Alert.alert('오류', '크루 정보를 가져오는 중 오류가 발생했습니다.');
       } finally {
         setLoading(false);
       }
