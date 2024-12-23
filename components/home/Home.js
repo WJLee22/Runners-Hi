@@ -194,7 +194,7 @@ export default function Home({ navigation, route }) {
 		// Toast 메시지 출력부분 <Text> 컴포넌트 에러로 인해 미사용. 추후 개선 예정 
 		Toast.show({
 			type: 'success', // 메시지의 타입 (성공 메시지)
-			text1: '현위치 기준 가까운 러닝방으로 정렬되었습니다!', // 표시될 메시지
+			text1: '현위치 기준 가까운 러닝방순으로 정렬되었습니다!', // 표시될 메시지
 			autoHide: true, // 자동으로 숨김
 			visibilityTime: 1000, // 1초 후에 사라짐
 			position: 'top', // 상단에 표시
